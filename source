@@ -1,0 +1,841 @@
+local prefix = ">"
+local commands = {}
+local Main = Instance.new("ScreenGui",game.CoreGui)
+
+Main.Name = "Playerlist"
+
+function Corner(parent)
+	local a = Instance.new("UICorner",parent)
+	a.CornerRadius = UDim.new(0,5)
+end
+
+function Frame(parent,scrolling,color,size,position,transparency,addCorner,zindex,visible,e)
+	local a
+	if scrolling then
+		a = Instance.new("ScrollingFrame",parent)
+		a.ScrollBarThickness = 7
+		if e then
+			a.CanvasSize = e
+		end
+	else
+		a = Instance.new("Frame",parent)
+	end
+	a.BackgroundColor3 = color or Color3.fromRGB(0,0,0)
+	a.Size = size
+	a.Position = position
+	a.BackgroundTransparency = transparency
+	a.ZIndex = zindex
+	a.Visible = visible
+	a.BorderSizePixel = 0
+	if addCorner then
+		Corner(a)
+	end
+	return a
+end
+
+function Text(parent,button,text,color,textColor,size,position,transparency,addCorner,font,textSize,textScaled,zindex,visible,textbox)
+	local a
+	if button then
+		a = Instance.new("TextButton",parent)
+	elseif textbox then
+		a = Instance.new("TextBox",parent)
+	else
+		a = Instance.new("TextLabel",parent)
+	end
+	a.Text = text
+	a.BackgroundColor3 = color
+	a.TextColor3 = textColor
+	a.Size = size
+	a.Position = position
+	a.BackgroundTransparency = transparency
+	a.Font = font or Enum.Font.SourceSans
+	a.TextSize = textSize
+	a.ZIndex = zindex
+	a.Visible = visible
+	a.BorderSizePixel = 0
+	if textScaled then
+		a.TextScaled = true
+	end
+	if addCorner then
+		Corner(a)
+	end
+	return a
+end
+local Base = Frame(Main,false,Color3.new(0.129412, 0.129412, 0.129412),UDim2.new(0, 230, 0, 300),UDim2.new(1, 0, 0.395229459, 0),0,true,1,1,true)
+	
+local Heading = Frame(Base,false,Color3.new(0.196078, 0.196078, 0.196078),UDim2.new(0, 230, 0, 25),UDim2.new(-0.000996661722, 0, -0.09, 0),0,true,5,true)	
+
+local Command_ = Frame(Base,true,Color3.new(1, 1, 1),UDim2.new(0, 233, 0, 183),UDim2.new(0.29864198, 0, 0.00656244671, 0),1,false,1,true,UDim2.new(0,0,0,0))	
+
+local TextLabel = Text(Heading,false,"EmHub.exe",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(0, 95, 0, 22),UDim2.new(0.0620914474, 0, 0, 0),1,false,Enum.Font.Code,14,true,10,true)		
+local minize = Text(Heading,true,"−",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(0, 20, 0, 18),UDim2.new(0.852941155, 0, 0, 1),1,false,Enum.Font.SourceSans,27,false,10,true)	
+
+local Output = Frame(Base,false,Color3.new(0.0941176, 0.0941176, 0.0941176),UDim2.new(0, 207, 0, 90),UDim2.new(0.0515021458, 0, 0.15, 0),0,true,1,true)
+
+local InputBox = Frame(Base,false,Color3.new(0.0941176, 0.0941176, 0.0941176),UDim2.new(0, 207, 0, 24),UDim2.new(0.0520784445, 0, 0.05, 0),0,true,1,true)	
+local InputTextBox = Text(InputBox,false,"KN:/>",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(-0.0186749883, 200, 1, 0),UDim2.new(0.0186749883, 0, 0, 0),1,false,Enum.Font.Code,12,false,1,true,true)
+local ScrollingFrame = Frame(Output,true,Color3.new(0.0941176, 0.0941176, 0.0941176),UDim2.new(0, 203, 0, 90),UDim2.new(0.0193236712, 0, 0, 0),1,false,1,true)
+local Name = Text(Heading, true, "x", Color3.new(1, 1, 1), Color3.new(1, 1, 1), UDim2.new(0, 23, 0, 18), UDim2.new(0.918300629, 0, 0, 1), 1, false, Enum.Font.SourceSans, 30, false, 10, true)
+
+local Output2 = Frame(Base, false, Color3.new(0.0941176, 0.0941176, 0.0941176), 
+    UDim2.new(0, 207, 0, 140), 
+    UDim2.new(0.0515021458, 0, 0.48, 0), 
+    0, true, 1, true)
+
+local ScrollingFrame2 = Frame(Output2, true, Color3.new(0.0941176, 0.0941176, 0.0941176), 
+    UDim2.new(0, 207, 0, 140), 
+    UDim2.new(0, 0, 0, 0), 
+    1, false, 1, true)
+
+ScrollingFrame2.CanvasSize = UDim2.new(0, 0, 0, 0)  
+
+
+function addFrame(name)
+    local frameHeight = 30  
+    local frameWidth = 200 
+    local spacing = 5       
+    local padding = 5    
+    local totalFrames = #ScrollingFrame2:GetChildren() 
+
+    local newFrame = Frame(ScrollingFrame2, false, Color3.new(0.129412, 0.129412, 0.129412) , 
+        UDim2.new(0, frameWidth, 0, frameHeight), 
+        UDim2.new(0, padding, 0, (totalFrames * (frameHeight + spacing)) + padding),  
+        0, true, 1, true)
+
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, frameHeight / 2) 
+    corner.Parent = newFrame
+
+   
+    local textLabel = Text(newFrame, false," " .. name .. " ", Color3.new(1, 1, 1), Color3.new(0.5, 0.5, 0.5), 
+       UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), 
+         1, true, Enum.Font.FredokaOne, 10, true, 1, true)
+
+
+    ScrollingFrame2.CanvasSize = UDim2.new(0, 0, 0, (totalFrames + 1) * (frameHeight + spacing) + padding)
+end
+
+
+Name.MouseButton1Click:Connect(function()
+    Main:Destroy()
+    script:Destroy()
+end)
+
+local l2 = Instance.new("UIListLayout",ScrollingFrame)
+
+ScrollingFrame.CanvasSize = UDim2.new(0,0,0,0)
+InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
+InputTextBox.TextYAlignment = Enum.TextYAlignment.Top
+InputTextBox.ClearTextOnFocus = false	
+ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y	
+
+
+local UIS = game:GetService("UserInputService")
+spawn(function()
+	local Frame = Base
+	local dragToggle = nil
+	local dragSpeed = 0.25
+	local dragInput = nil
+	local dragStart = nil
+	local dragPos = nil
+	local startPos
+	local function updateInput(input)
+		local Delta = input.Position - dragStart
+		local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+		game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.25), {Position = Position}):Play()
+	end
+
+	Heading.InputBegan:Connect(function(input)
+		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
+			dragToggle = true
+			dragStart = input.Position
+			startPos = Frame.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragToggle = false
+				end
+			end)
+		end
+	end)
+
+	Frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+		if input == dragInput and dragToggle then
+			updateInput(input)
+		end
+	end)
+end)
+Base:TweenPosition(UDim2.new(0.5, 0, 0.5, 0), "Out", "Quad", 1)
+Base.Draggable = true
+
+
+-- var
+
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local tpclicksuccess = false
+local tpClickConnection
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local tweenSpeed = 0.5
+local dontuse = false
+local time = 0
+local box = InputTextBox
+local typing = false
+local history = box.Text
+local UIS = game:GetService("UserInputService")
+local output = ScrollingFrame
+local typing2 = false
+local typing3 = false
+local speaker = game.Players.LocalPlayer
+
+box.TextWrapped = true
+box.Focused:Connect(function() typing = true end)
+box.FocusLost:Connect(function() wait() typing = false end)
+
+function notif(msg,col)
+	if #output:GetChildren() > 2 then
+		local la = output:GetChildren()[#output:GetChildren()]
+		if la.TextColor3 == Color3.new(1, 1, 0) then
+			la.TextColor3 = Color3.new(0.25098, 0.756863, 0)
+		end
+	end
+	local new
+	if msg == "player not found" or msg == "invalid command" then
+		if msg == "invalid command" then
+			new = Text(Output,false,"error: invalid command",Color3.new(1, 1, 1),Color3.new(1, 0, 0),UDim2.new(0, 200, 0, 15),UDim2.new(0, 0, 0, 0),1,false,Enum.Font.SourceSans,14,false,1,true,false)
+		else
+			new = Text(Output,false,"error: missing player",Color3.new(1, 1, 1),Color3.new(1, 0, 0),UDim2.new(0, 200, 0, 15),UDim2.new(0, 0, 0, 0),1,false,Enum.Font.SourceSans,14,false,1,true,false)
+		end
+	else
+		new = Text(Output,false,msg,Color3.new(1, 1, 1),(col or Color3.new(1, 1, 0)),UDim2.new(0, 200, 0, 15),UDim2.new(0, 0, 0, 0),1,false,Enum.Font.SourceSans,14,false,1,true,false)
+	end
+	new.Parent = output
+	new.TextXAlignment = Enum.TextXAlignment.Left
+	new.TextWrapped = true
+	new.AutomaticSize = Enum.AutomaticSize.Y
+	output.CanvasPosition = Vector2.new(0,9999)
+end
+
+function error(msg)
+    notif("error: " .. msg, Color3.new(1, 0, 0)) 
+end
+
+notif("Starting up...")
+
+
+local function rollrand()
+    local randNum = math.random(0, 0.3)
+end
+
+game.Players.LocalPlayer.Chatted:Connect(function(msg)
+    if not lUdiF2TGD then return end
+    if string.sub(msg:lower(), 0, 1) == prefix then 
+        if msg:split(prefix)[1] == "" then
+            local msgs = msg:split(prefix)
+            msgs = msgs[2]:split(" ")
+            msgs[1] = msgs[1]:lower()
+            local cmd = msgs[1]
+            
+            if cmd == "code" then
+                return loadstring(string.sub(msg, 7, #msg))()
+            end
+
+            if not commands[msgs[1]] then
+                return notif("Invalid command")
+            end
+            
+            local success = pcall(function()
+                if msgs[2] then
+                    commands[msgs[1]](msgs[2])
+                else
+                    commands[msgs[1]]()
+                end
+            end)
+            
+            if not success then
+                notif("Unexpected error occurred")
+            end
+        end
+    end
+end)
+
+
+UIS.InputBegan:Connect(function(i)
+	i = i.KeyCode
+	if typing then
+		if i == Enum.KeyCode.Return then
+			local input = box.Text:gsub(">","")
+			input = prefix..input:split("/")[2]
+			box.Text = "KN:/>"
+			local msg = input
+			box:ReleaseFocus()
+			game.Players:Chat(input)
+		elseif box.Text:sub(1,5) ~= "KN:/>" then
+			box.Text = history
+			box.CursorPosition = #box.Text+1
+		end
+		history = box.Text
+	end
+end)
+
+
+
+-- func
+local function parseKeybind(keybind)
+	local ctrl, alt, shift, fn, key, inputType
+
+	keybind = keybind:lower()
+
+	for part in string.gmatch(keybind, "[^+]+") do
+		if part == "ctrl" then
+			ctrl = true
+		elseif part == "alt" then
+			alt = true
+		elseif part == "shift" then
+			shift = true
+		elseif part == "fn" then
+			fn = true -- ignored in detection (not detectable in Roblox)
+		elseif part == "m1" then
+			key = Enum.UserInputType.MouseButton1
+			inputType = "mouse"
+		elseif part == "m2" then
+			key = Enum.UserInputType.MouseButton2
+			inputType = "mouse"
+		elseif part == "m3" then
+			key = Enum.UserInputType.MouseButton3
+			inputType = "mouse"
+		else
+			local upperPart = part:upper()
+			if upperPart:match("^F%d+$") and Enum.KeyCode[upperPart] then
+				key = Enum.KeyCode[upperPart]
+				inputType = "keyboard"
+			else
+                pcall(function()
+				    local keyCode = Enum.KeyCode[upperPart]
+				    if keyCode and keyCode ~= Enum.KeyCode.Unknown then
+					    key = keyCode
+					    inputType = "keyboard"
+                        spawn(function()
+                            tpclicksuccess = true
+                        end)
+				    else
+					    print("Invalid keybind: '" .. part .. "' is not recognized")
+				    end
+                end)
+			end
+		end
+	end
+
+	return {
+		ctrl = ctrl,
+		alt = alt,
+		shift = shift,
+		fn = fn,
+		key = key,
+		inputType = inputType
+	}
+end
+
+function tpclick(keybind)
+	if tpClickConnection then
+		tpClickConnection:Disconnect()
+	end
+
+	local config = parseKeybind(keybind)
+
+	local function teleport()
+		if Mouse.Hit then
+			local char = LocalPlayer.Character
+			if char and char:FindFirstChild("HumanoidRootPart") then
+				char.HumanoidRootPart.CFrame = Mouse.Hit + Vector3.new(0, 3, 0)
+			end
+		end
+	end
+
+	tpClickConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+		if gameProcessed then return end
+
+		local isCorrectInput = false
+		if config.inputType == "mouse" then
+			isCorrectInput = input.UserInputType == config.key
+		elseif config.inputType == "keyboard" then
+			isCorrectInput = input.KeyCode == config.key
+		end
+
+		if isCorrectInput then
+			if (not config.ctrl or UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl))
+			and (not config.alt or UserInputService:IsKeyDown(Enum.KeyCode.LeftAlt) or UserInputService:IsKeyDown(Enum.KeyCode.RightAlt))
+			and (not config.shift or UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) or UserInputService:IsKeyDown(Enum.KeyCode.RightShift)) then
+				-- Note: fn not actually checked (undetectable in Roblox)
+				teleport()
+			end
+		end
+	end)
+end
+
+function tweengoto(cframe, speed)
+	local speaker = Players.LocalPlayer
+	if not speaker or not speaker.Character then return end
+    tweenSpeed = speed
+
+    if not speed then
+        error("set a tweenspeed")
+        return
+    end
+
+	if speaker.Character:FindFirstChildOfClass("Humanoid") and speaker.Character:FindFirstChildOfClass("Humanoid").SeatPart then
+		speaker.Character:FindFirstChildOfClass("Humanoid").Sit = false
+		task.wait(0.1)
+	end
+
+	local root = getRoot(speaker.Character)
+	if root then
+		TweenService:Create(
+			root,
+			TweenInfo.new(tweenSpeed, Enum.EasingStyle.Linear),
+			{ CFrame = cframe }
+		):Play()
+	end
+end
+
+local function findPlayer(name)
+    name = string.lower(name)
+    local bestMatch = nil
+
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        local username = string.lower(player.Name)
+        local displayName = string.lower(player.DisplayName)
+
+        if username == name or displayName == name then
+            return player
+        end
+
+        if string.sub(username, 1, #name) == name or string.sub(displayName, 1, #name) == name then
+            bestMatch = player
+        end
+    end
+
+    return bestMatch
+end
+
+local looping = false
+
+local function looptp(e)
+    local localPlayer = game.Players.LocalPlayer
+    local target = findPlayer(e)
+    if not target then
+        error("user not found")
+        return
+    end
+    looping = true
+    notif("teleporting to " .. target.Name .. "")
+    while looping do
+        target = findPlayer(e) 
+        if not target or not target.Character then
+            notif("target missing/left the game")
+            looping = false
+            break
+        end
+        local rootPart = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+        if rootPart and targetRoot then
+            rootPart.CFrame = targetRoot.CFrame
+        else
+            error("couldn't find HumanoidRootPart")
+            looping = false
+            break
+        end
+        task.wait()
+    end
+end
+
+local function hasTool(player)
+    return player.Backpack:FindFirstChildOfClass("Tool") or player.Character:FindFirstChildOfClass("Tool")
+end
+
+
+local function attach(targetName)
+    local target = findPlayer(targetName)
+
+    if not target or not target.Character then
+        notif("Target not found or has no character.")
+        return
+    end
+
+    if not hasTool(speaker) then
+        notif("You need a tool to use this command.")
+        return
+    end
+
+    local char = speaker.Character
+    local tchar = target.Character
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    local hrp = getRoot(char)
+    local hrp2 = getRoot(tchar)
+
+    if not hrp or not hrp2 then
+        notif("HumanoidRootPart missing!")
+        return
+    end
+
+    hum.Name = "1"
+    local newHum = hum:Clone()
+    newHum.Parent = char
+    newHum.Name = "Humanoid"
+    task.wait()
+    hum:Destroy()
+    workspace.CurrentCamera.CameraSubject = char
+    newHum.DisplayDistanceType = "None"
+
+    local tool = speaker.Backpack:FindFirstChildOfClass("Tool") or char:FindFirstChildOfClass("Tool")
+    tool.Parent = char
+    hrp.CFrame = hrp2.CFrame * CFrame.new(math.random(-100, 100) / 200, math.random(-100, 100) / 200, math.random(-100, 100) / 200)
+
+    local n = 0
+    repeat
+        task.wait(0.1)
+        n = n + 1
+        if not hrp or not hrp2 or not hrp.Parent or not hrp2.Parent or n > 250 then
+            break
+        end
+        hrp.CFrame = hrp2.CFrame
+    until tool.Parent ~= char
+
+    notif("Attachment ended.")
+end
+
+local function breakvelocity()
+    local BeenASecond, V3 = false, Vector3.new(0, 0, 0)
+
+    delay(1, function()
+        BeenASecond = true
+    end)
+
+    while not BeenASecond do
+        if speaker.Character then
+            for _, v in ipairs(speaker.Character:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Velocity, v.RotVelocity = V3, V3
+                end
+            end
+        end
+        task.wait()
+    end
+end
+
+local function getPlayer(name)
+    local foundPlayers = {}
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if string.find(string.lower(player.Name), string.lower(name)) or string.find(string.lower(player.DisplayName), string.lower(name)) then
+            table.insert(foundPlayers, player)
+        end
+    end
+    return foundPlayers
+end
+
+local function tpto(TARGET)
+    local players = getPlayer(TARGET)
+    if #players == 0 then
+        error("Player not found")
+        return
+    end
+
+    for _, target in pairs(players) do
+        if target.Character then
+            local speakerRoot = getRoot(speaker.Character)
+            local targetRoot = getRoot(target.Character)
+
+            if speakerRoot and targetRoot then
+                local humanoid = speaker.Character:FindFirstChildOfClass('Humanoid')
+                if humanoid and humanoid.SeatPart then
+                    humanoid.Sit = false
+                    task.wait(0.1)
+                end
+                speakerRoot.CFrame = targetRoot.CFrame + Vector3.new(3,1,0)
+            end
+        end
+    end
+    breakvelocity()
+end
+
+function tools(plr)
+    if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass('Tool') or plr.Character:FindFirstChildOfClass('Tool') then
+        return true
+    end
+end
+
+function getRoot(char)
+    local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+    return rootPart
+end
+
+local function loopbehind(e)
+    local localPlayer = game.Players.LocalPlayer
+    local target = findPlayer(e)
+
+    if not target then
+        error("User not found")
+        return
+    end
+
+    looping = true
+    notif("Teleporting behind " .. target.Name .. "...")
+
+    while looping do
+        target = findPlayer(e)
+        if not target or not target.Character then
+            notif("Target missing/left the game")
+            looping = false
+            break
+        end
+
+        local rootPart = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+
+        if rootPart and targetRoot then
+            -- Teleport behind the target
+            local offset = targetRoot.CFrame.LookVector * -1 -- Moves 2 studs behind the target
+            rootPart.CFrame = targetRoot.CFrame + offset
+        else
+            error("Couldn't find HumanoidRootPart")
+            looping = false
+            break
+        end
+        task.wait()
+    end
+end
+
+function bring(target)
+    local speaker = game.Players.LocalPlayer
+    if tools(speaker) then
+        if target ~= nil then
+            local NormPos = getRoot(speaker.Character).CFrame
+            local hrp = getRoot(speaker.Character)
+            attach(target)
+            repeat
+                task.wait()
+                hrp.CFrame = NormPos
+            until not getRoot(target.Character) or not getRoot(speaker.Character)
+            speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
+        end
+    else
+        error('You need to have an item in your inventory to use this command')
+    end
+end
+
+local function usetsbmove(move)
+    local player = game:GetService("Players").LocalPlayer
+    local backpack = player.Backpack
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local toolName = move  -- Tool name in the Backpack
+
+    -- Check if the tool exists in the Backpack
+    local tool = backpack:FindFirstChild(toolName)
+
+    if tool then
+        -- Equip the tool if it exists
+        tool.Parent = character
+        humanoid:EquipTool(tool)
+
+        -- Activate the tool (if it has an activation method)
+        if tool:IsA("Tool") then
+            tool:Activate()
+        else
+            error("No activation method found for the " .. toolName .. " tool.")
+            return
+        end
+
+        -- Unequip the tool after use
+        wait(1)  -- Adjust the wait time as needed
+        humanoid:UnequipTools()  -- Unequip the tool
+        tool.Parent = backpack  -- Move the tool back to the backpack
+    else
+        error(toolName .. " not found in Backpack.")
+    end
+end
+
+commands.tpclick1 = function(key)
+    tpclick(key)
+    if not tpclicksuccess then
+        error("invalid keybind,usable keybinds:")
+        notif("-> m1, m2, m3")
+        notif("-> ctrl, shift, alt, fn")
+        notif("-> f1, f2, f3, etc")
+        notif("-> a, b, c, etc")
+        notif("example usage: >tpclick ctrl+shift+a")
+    elseif tpclicksuccess then
+        notif("successfully binded ".. key)
+    end
+end
+
+wait()
+
+commands.tsbbring3 = function(target)
+    if game.PlaceId ~= 10449761463 then
+        error("this command only works on \'The Strongest Battlegrounds.\"")
+    end
+    local user = game.Players.LocalPlayer
+    local a = user.Character.HumanoidRootPart
+    local bkp = user.Backpack
+    local firstcd = user.PlayerGui.Hotbar.Backpack.Hotbar["1"].Base:FindFirstChild("Cooldown")
+    local secondcd = user.PlayerGui.Hotbar.Backpack.Hotbar["2"].Base:FindFirstChild("Cooldown")
+    local thirdcd = user.PlayerGui.Hotbar.Backpack.Hotbar["3"].Base:FindFirstChild("Cooldown")
+    local fourthcd = user.PlayerGui.Hotbar.Backpack.Hotbar["4"].Base:FindFirstChild("Cooldown")
+    local currentpos = a.CFrame
+    local actualpos = CFrame.new(currentpos.Position)  -- Extract position and use it for CFrame.new
+
+    if dontuse then
+        return
+    else
+        print("")
+        dontuse = true
+    end
+
+    task.wait(.2)
+
+    if bkp:FindFirstChild("Flowing Water") or bkp:FindFirstChild("Lethal Whirlwind Stream") then
+        if not firstcd or not secondcd then
+            if bkp:FindFirstChild("Flowing Water") and not firstcd then
+                spawn(function()
+                    looptp(target)
+                end)
+                task.wait(.2)
+                usetsbmove("Flowing Water") 
+            elseif bkp:FindFirstChild("Lethal Whirlwind Stream") then
+                spawn(function()
+                    looptp(target)
+                end)
+                task.wait(.2)
+                usetsbmove("Lethal Whirlwind Stream")
+            end
+        else
+            error("All your compatible moves are on cooldown, try again later")
+            looping = false
+            return
+        end
+    end
+
+    if bkp:FindFirstChild("Bullet Barrage") or bkp:FindFirstChild("Head First") then
+        if not fourthcd then
+            if bkp:FindFirstChild("Head First") then
+                spawn(function()
+                    looptp(target)
+                end)
+                usetsbmove("Head First")
+            end
+        else
+            error("All your compatible moves are on cooldown, try again later")
+            return
+        end
+    end
+
+    task.wait(.3)
+    looping = false
+    a.CFrame = currentpos
+    dontuse = false
+end
+
+wait()
+
+commands.lbbg = function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/FidNdxXV"))()
+end
+
+wait()
+
+commands.looptp = function(target)
+    looptp(target)
+end
+
+wait()
+
+commands.unlooptp = function(target)
+    looping = false
+end
+
+wait()
+
+commands.bring = function(target)
+    if target then
+        bring(target) 
+    else
+        error("user not found")
+    end
+end
+
+wait()
+
+commands.attach = function(target)
+    if target then
+        attach(target)
+    else
+        notif("Usage: " .. prefix .. "attach [player]")
+    end
+end
+
+wait()
+
+commands.breakvelocity = function()
+    breakvelocity()
+    notif("broke velocity")
+end
+
+wait()
+
+commands.tpto = function(target)
+    tpto(target)
+end
+
+wait()
+
+commands.lalal = function()
+    notif("lala")
+end
+
+wait()
+
+addFrame("  bring (plr) [TOOL]  ") wait(randNum) rollrand()
+addFrame(" attach (plr) [TOOL] ") wait(randNum) rollrand()
+addFrame("         tpto (plr)         ")  wait(randNum) rollrand()
+addFrame("  tpclick (KEYBIND)  ") wait (randNum) rollrand()
+addFrame("            lbbg           ") wait(randNum) rollrand()
+addFrame("  tsbbring [BUGGY] ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+addFrame("          command          ") wait(randNum) rollrand()
+
+
+game.Players.LocalPlayer.Chatted:Connect(function(msg)
+    if string.sub(msg, 1, 1) == prefix then
+        local args = string.split(string.sub(msg, 2), " ")
+        local command = args[1]
+        table.remove(args, 1)
+
+        if commands[command] then
+            commands[command](table.concat(args, " "))
+        else
+            notif("invalid command")
+        end
+    end
+end)
+
+wait()
+notif("EmHub loaded")
