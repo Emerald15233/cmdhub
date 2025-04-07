@@ -1,5 +1,6 @@
 local prefix = ">"
 local commands = {}
+print("hi")
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
 Main.Name = "Playerlist"
