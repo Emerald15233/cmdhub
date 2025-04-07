@@ -1,7 +1,5 @@
 
-if prefix == nil then
-    prefix = ">"
-end
+local prefix = ">"
 local commands = {}
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
@@ -303,7 +301,7 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/ref
 
 local function rejoin()
     notif("Rejoining...")
-    wait(1)
+    wait(.5)
 	local player = Players.LocalPlayer
 	if player then
 		local placeId = game.PlaceId
