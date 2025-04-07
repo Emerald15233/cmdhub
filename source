@@ -1,5 +1,4 @@
 local prefix = ">"
-print("e")
 local commands = {}
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
@@ -68,13 +67,13 @@ local Heading = Frame(Base,false,Color3.new(0.196078, 0.196078, 0.196078),UDim2.
 
 local Command_ = Frame(Base,true,Color3.new(1, 1, 1),UDim2.new(0, 233, 0, 183),UDim2.new(0.29864198, 0, 0.00656244671, 0),1,false,1,true,UDim2.new(0,0,0,0))	
 
-local TextLabel = Text(Heading,false,"EmHub.exe",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(0, 95, 0, 22),UDim2.new(0.0620914474, 0, 0, 0),1,false,Enum.Font.Code,14,true,10,true)		
+local TextLabel = Text(Heading,false,"cmdhub.exe",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(0, 80, 0, 22),UDim2.new(0.0620914474, 0, 0, 0),1,false,Enum.Font.Code,5,true,7,true)		
 local minize = Text(Heading,true,"−",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(0, 20, 0, 18),UDim2.new(0.852941155, 0, 0, 1),1,false,Enum.Font.SourceSans,27,false,10,true)	
 
 local Output = Frame(Base,false,Color3.new(0.0941176, 0.0941176, 0.0941176),UDim2.new(0, 207, 0, 90),UDim2.new(0.0515021458, 0, 0.15, 0),0,true,1,true)
 
 local InputBox = Frame(Base,false,Color3.new(0.0941176, 0.0941176, 0.0941176),UDim2.new(0, 207, 0, 24),UDim2.new(0.0520784445, 0, 0.05, 0),0,true,1,true)	
-local InputTextBox = Text(InputBox,false,"KN:/>",Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(-0.0186749883, 200, 1, 0),UDim2.new(0.0186749883, 0, 0, 0),1,false,Enum.Font.Code,12,false,1,true,true)
+local InputTextBox = Text(InputBox,false,"KN:/".. prefix,Color3.new(1, 1, 1),Color3.new(1, 1, 1),UDim2.new(-0.0186749883, 200, 1, 0),UDim2.new(0.0186749883, 0, 0, 0),1,false,Enum.Font.Code,12,false,1,true,true)
 local ScrollingFrame = Frame(Output,true,Color3.new(0.0941176, 0.0941176, 0.0941176),UDim2.new(0, 203, 0, 90),UDim2.new(0.0193236712, 0, 0, 0),1,false,1,true)
 local Name = Text(Heading, true, "x", Color3.new(1, 1, 1), Color3.new(1, 1, 1), UDim2.new(0, 23, 0, 18), UDim2.new(0.918300629, 0, 0, 1), 1, false, Enum.Font.SourceSans, 30, false, 10, true)
 
@@ -95,7 +94,7 @@ function addFrame(name)
     local frameHeight = 30  
     local frameWidth = 200 
     local spacing = 5       
-    local padding = 5    
+    local padding = 5
     local totalFrames = #ScrollingFrame2:GetChildren() 
 
     local newFrame = Frame(ScrollingFrame2, false, Color3.new(0.129412, 0.129412, 0.129412) , 
@@ -111,7 +110,7 @@ function addFrame(name)
    
     local textLabel = Text(newFrame, false," " .. name .. " ", Color3.new(1, 1, 1), Color3.new(0.5, 0.5, 0.5), 
        UDim2.new(1, 0, 1, 0), UDim2.new(0, 0, 0, 0), 
-         1, true, Enum.Font.FredokaOne, 10, true, 1, true)
+         1, true, Enum.Font.Jura, 10, true, 1, true)
 
 
     ScrollingFrame2.CanvasSize = UDim2.new(0, 0, 0, (totalFrames + 1) * (frameHeight + spacing) + padding)
@@ -178,6 +177,9 @@ Base.Draggable = true
 
 -- var
 
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+local cmddesc = { }
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -276,11 +278,11 @@ UIS.InputBegan:Connect(function(i)
 		if i == Enum.KeyCode.Return then
 			local input = box.Text:gsub(">","")
 			input = prefix..input:split("/")[2]
-			box.Text = "KN:/>"
+			box.Text = "KN:/".. prefix
 			local msg = input
 			box:ReleaseFocus()
 			game.Players:Chat(input)
-		elseif box.Text:sub(1,5) ~= "KN:/>" then
+		elseif box.Text:sub(1,5) ~= "KN:/".. prefix then
 			box.Text = history
 			box.CursorPosition = #box.Text+1
 		end
@@ -289,8 +291,23 @@ UIS.InputBegan:Connect(function(i)
 end)
 
 
+local Players = game:GetService("Players")
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
 
 -- func
+
+
+local function rejoin()
+    notif("Rejoining...")
+    wait(1)
+	local player = Players.LocalPlayer
+	if player then
+		local placeId = game.PlaceId
+		TeleportService:Teleport(placeId, player)
+	end
+end
+
 local function parseKeybind(keybind)
 	local ctrl, alt, shift, fn, key, inputType
 
@@ -665,7 +682,16 @@ local function usetsbmove(move)
     end
 end
 
-commands.tpclick1 = function(key)
+commands.rejoin = function()
+    rejoin()
+end
+wait()
+commands.rj = function()
+    rejoin()
+end
+wait()
+
+commands.tpclick = function(key)
     tpclick(key)
     if not tpclicksuccess then
         error("invalid keybind,usable keybinds:")
@@ -681,7 +707,7 @@ end
 
 wait()
 
-commands.tsbbring3 = function(target)
+commands.tsbbring = function(target)
     if game.PlaceId ~= 10449761463 then
         error("this command only works on \'The Strongest Battlegrounds.\"")
     end
@@ -799,29 +825,46 @@ end
 
 wait()
 
-commands.lalal = function()
-    notif("lala")
+commands.whatis = function(command)
+    if cmddesc[command] then
+        notif(cmddesc[command])
+    else
+        error("unknown command")
+    end
 end
 
 wait()
-
 addFrame("  bring (plr) [TOOL]  ") wait(randNum) rollrand()
+cmddesc["bring"] = "bring: Brings the target to you [TOOL REQUIRED]"
+
 addFrame(" attach (plr) [TOOL] ") wait(randNum) rollrand()
+cmddesc["attach"] = "attach: Attaches onto the target [TOOL REQUIRED]"
+
 addFrame("         tpto (plr)         ")  wait(randNum) rollrand()
+cmddesc["tpto"]  = "tpto: Teleports to a target"
+
 addFrame("  tpclick (KEYBIND)  ") wait (randNum) rollrand()
+cmddesc["tpclick"] = "tpclick: Sets up a click-teleport script [KEYBIND REQUIRED]"
+
 addFrame("            lbbg           ") wait(randNum) rollrand()
+cmddesc["lbbg"] = "lbbg: Loads a Lucky-Block-Battlegrounds script [ONLY WORKS IN LBBG]"
+
 addFrame("  tsbbring [BUGGY] ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
-addFrame("          command          ") wait(randNum) rollrand()
+cmddesc["tsbbring"] = "tsbbring: Brings the target to you [ON TSB]"
+
+addFrame("    breakvelocity    ") wait(randNum) rollrand()
+cmddesc["breakvelocity"] = "breakvelocity: Breaks your velocity for a couple of seconds"
+
+addFrame("      looptp (plr)      ") wait(randNum) rollrand()
+cmddesc["looptp"] = "looptp: Loop teleports to the target"
+
+addFrame("     unlooptp (plr)     ") wait(randNum) rollrand()
+cmddesc["unlooptp"] = "unlooptp: Stops the looptp command."
+
+addFrame("     rejoin/rj     ") wait(randNum) rollrand()
+cmddesc["rejoin / rj"] = "rejoin/rj: Rejoins the server"
+cmddesc["rj"] = "rj: Rejoins the server"
+cmddesc["rejoin"] = "rejoin: Rejoins the server"
 
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
@@ -839,4 +882,4 @@ game.Players.LocalPlayer.Chatted:Connect(function(msg)
 end)
 
 wait()
-notif("EmHub loaded")
+notif("command hub loaded")
