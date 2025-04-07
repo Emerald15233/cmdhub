@@ -1,4 +1,7 @@
-local prefix = ">"
+
+if prefix == nil then
+    prefix = ">"
+end
 local commands = {}
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
@@ -882,4 +885,5 @@ game.Players.LocalPlayer.Chatted:Connect(function(msg)
 end)
 
 wait()
-notif("command hub loaded")
+notif("cmdhub loaded")
+notif("to see what a command does, simply type ".. prefix .."whatis (command)")
