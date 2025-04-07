@@ -1,4 +1,5 @@
 local prefix = ">"
+print("e")
 local commands = {}
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
