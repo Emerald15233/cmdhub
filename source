@@ -1,5 +1,7 @@
 
-local prefix = ">"
+if prefix == nil then
+    prefix = ">"
+end
 local commands = {}
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
@@ -180,7 +182,7 @@ Base.Draggable = true
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
-local cmddesc = { }
+local cmddesc = {  }
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -298,6 +300,103 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/ref
 
 -- func
 
+-- Function to generate a random string
+function randomString()
+    local length = math.random(10, 20)
+    local array = {}
+    for i = 1, length do
+        array[i] = string.char(math.random(32, 126))
+    end
+    return table.concat(array)
+end
+
+-- Get the character's root part
+function getRoot(char)
+    local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+    return rootPart
+end
+
+-- Main float function
+function float(speaker)
+    local Floating = false
+    local floatName = randomString()
+    local RunService = game:GetService("RunService")
+    local UserInputService = game:GetService("UserInputService")
+    
+    Floating = true
+    local pchar = speaker.Character
+    if pchar and not pchar:FindFirstChild(floatName) then
+        task.spawn(function()
+            local Float = Instance.new('Part')
+            Float.Name = floatName
+            Float.Parent = pchar
+            Float.Transparency = 1
+            Float.Size = Vector3.new(2, 0.2, 1.5)
+            Float.Anchored = true
+            local FloatValue = -3.1
+            Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0, FloatValue, 0)
+
+            -- Notify the user
+            notif('Float Enabled (Q = down & E = up)')
+
+            -- Event connections for key actions (Q and E)
+            local qUp, eUp, qDown, eDown
+
+            qUp = UserInputService.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.Q then
+                    FloatValue = FloatValue + 0.5
+                end
+            end)
+
+            eUp = UserInputService.InputEnded:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.E then
+                    FloatValue = FloatValue - 1.5
+                end
+            end)
+
+            qDown = UserInputService.InputBegan:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.Q then
+                    FloatValue = FloatValue - 0.5
+                end
+            end)
+
+            eDown = UserInputService.InputBegan:Connect(function(input)
+                if input.KeyCode == Enum.KeyCode.E then
+                    FloatValue = FloatValue + 1.5
+                end
+            end)
+
+            -- When the character dies, clean up
+            local floatDied = speaker.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
+                FloatingFunc:Disconnect()
+                Float:Destroy()
+                qUp:Disconnect()
+                eUp:Disconnect()
+                qDown:Disconnect()
+                eDown:Disconnect()
+                floatDied:Disconnect()
+            end)
+
+            -- Function to keep the floating part in place
+            local function FloatPadLoop()
+                if pchar:FindFirstChild(floatName) and getRoot(pchar) then
+                    Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0, FloatValue, 0)
+                else
+                    FloatingFunc:Disconnect()
+                    Float:Destroy()
+                    qUp:Disconnect()
+                    eUp:Disconnect()
+                    qDown:Disconnect()
+                    eDown:Disconnect()
+                    floatDied:Disconnect()
+                end
+            end
+
+            -- Connect the loop
+            FloatingFunc = RunService.Heartbeat:Connect(FloatPadLoop)
+        end)
+    end
+end
 
 local function rejoin()
     notif("Rejoining...")
@@ -310,6 +409,7 @@ local function rejoin()
 end
 
 local function parseKeybind(keybind)
+    tpclicksuccess = false
 	local ctrl, alt, shift, fn, key, inputType
 
 	keybind = keybind:lower()
@@ -344,7 +444,6 @@ local function parseKeybind(keybind)
 					    key = keyCode
 					    inputType = "keyboard"
                         spawn(function()
-                            tpclicksuccess = true
                         end)
 				    else
 					    print("Invalid keybind: '" .. part .. "' is not recognized")
@@ -353,6 +452,10 @@ local function parseKeybind(keybind)
 			end
 		end
 	end
+
+    if key then
+        tpclicksuccess = true
+    end
 
 	return {
 		ctrl = ctrl,
@@ -572,7 +675,6 @@ local function tpto(TARGET)
         if target.Character then
             local speakerRoot = getRoot(speaker.Character)
             local targetRoot = getRoot(target.Character)
-
             if speakerRoot and targetRoot then
                 local humanoid = speaker.Character:FindFirstChildOfClass('Humanoid')
                 if humanoid and humanoid.SeatPart then
@@ -703,6 +805,8 @@ commands.tpclick = function(key)
         notif("example usage: >tpclick ctrl+shift+a")
     elseif tpclicksuccess then
         notif("successfully binded ".. key)
+        wait(1)
+        tpclicksuccess = false
     end
 end
 
@@ -711,6 +815,7 @@ wait()
 commands.tsbbring = function(target)
     if game.PlaceId ~= 10449761463 then
         error("this command only works on \'The Strongest Battlegrounds.\"")
+        return
     end
     local user = game.Players.LocalPlayer
     local a = user.Character.HumanoidRootPart
@@ -826,47 +931,75 @@ end
 
 wait()
 
-commands.whatis = function(command)
-    if cmddesc[command] then
-        notif(cmddesc[command])
-    else
-        error("unknown command")
-    end
+commands.airwalk = function()
+    local speaker = game.Players.LocalPlayer
+    float(speaker)
 end
 
 wait()
+
+commands.cmdlist = function()
+    notif("Check F9 for the list of commands")
+    print("")
+    print("")
+    print("CMD LIST")
+    print("-------------------------------------------------------------------------------")
+    print("BRING : Brings the selected target to you")
+    print("ATTACH: Attaches the selected target to you [TOOL REQUIRED]")
+    print("TPTO: Teleports you to the selected target")
+    print("TPCLICK: Sets up a teleport-click script with customizable keybinds")
+    print("LBBG: Lucky block battlegrounds script [LBBG ONLY]")
+    print("TSBBRING: Brings the selected target to you [TSB ONLY]")
+    print("BREAKVELOCITY: Breaks your velocity")
+    print("LOOPTP: Loop teleports to the selected target")
+    print("UNLOOPTP: Stops loop teleporting")
+    print("REJOIN/RJ: Rejoins the server")
+    print("AIRWALK: Allows you to walk on air")
+    print("-------------------------------------------------------------------------------")
+end
+
+wait()
+
+
 addFrame("  bring (plr) [TOOL]  ") wait(randNum) rollrand()
-cmddesc["bring"] = "bring: Brings the target to you [TOOL REQUIRED]"
+
+task.wait()
 
 addFrame(" attach (plr) [TOOL] ") wait(randNum) rollrand()
-cmddesc["attach"] = "attach: Attaches onto the target [TOOL REQUIRED]"
+
+task.wait()
 
 addFrame("         tpto (plr)         ")  wait(randNum) rollrand()
-cmddesc["tpto"]  = "tpto: Teleports to a target"
+
+task.wait()
 
 addFrame("  tpclick (KEYBIND)  ") wait (randNum) rollrand()
-cmddesc["tpclick"] = "tpclick: Sets up a click-teleport script [KEYBIND REQUIRED]"
+
+task.wait()
 
 addFrame("            lbbg           ") wait(randNum) rollrand()
-cmddesc["lbbg"] = "lbbg: Loads a Lucky-Block-Battlegrounds script [ONLY WORKS IN LBBG]"
+
+task.wait()
 
 addFrame("  tsbbring [BUGGY] ") wait(randNum) rollrand()
-cmddesc["tsbbring"] = "tsbbring: Brings the target to you [ON TSB]"
+
+task.wait()
 
 addFrame("    breakvelocity    ") wait(randNum) rollrand()
-cmddesc["breakvelocity"] = "breakvelocity: Breaks your velocity for a couple of seconds"
+
+task.wait()
 
 addFrame("      looptp (plr)      ") wait(randNum) rollrand()
-cmddesc["looptp"] = "looptp: Loop teleports to the target"
+
+task.wait()
 
 addFrame("     unlooptp (plr)     ") wait(randNum) rollrand()
-cmddesc["unlooptp"] = "unlooptp: Stops the looptp command."
+
+task.wait()
 
 addFrame("     rejoin/rj     ") wait(randNum) rollrand()
-cmddesc["rejoin / rj"] = "rejoin/rj: Rejoins the server"
-cmddesc["rj"] = "rj: Rejoins the server"
-cmddesc["rejoin"] = "rejoin: Rejoins the server"
 
+task.wait()
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
@@ -884,4 +1017,4 @@ end)
 
 wait()
 notif("cmdhub loaded")
-notif("to see what a command does, simply type ".. prefix .."whatis (command)")
+notif("type ".. prefix .."cmdlist to see the list of commands")
