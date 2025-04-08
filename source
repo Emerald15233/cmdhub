@@ -617,7 +617,7 @@ local function attach(targetName)
     local target = findPlayer(targetName)
 
     if not target or not target.Character then
-        notif("Target not found or has no character.")
+        notif("Target not found or has no character..")
         return
     end
 
@@ -959,6 +959,39 @@ end
 
 wait()
 
+commands.kill = function(plr)
+	local speaker = game.Players.LocalPlayer
+	local target = findPlayer(plr)
+
+	if not target or not target.Character then
+		notif("Could not find target's character.")
+		return
+	end
+
+	if tools(speaker) then
+		local currentpos = getRoot(speaker.Character).CFrame
+		local hrp = getRoot(speaker.Character)
+        task.wait()
+		attach(plr)
+
+		repeat
+			task.wait()
+			if hrp then
+				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5, 999999)
+			end
+		until not getRoot(target.Character)
+        while true do
+            notif("Killed target")
+            speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = currentpos
+        end
+	else
+		notif("You need to have an item in your inventory to use this command")
+	end         
+end
+
+wait()
+
+
 commands.airwalk = function()
     local speaker = game.Players.LocalPlayer
     airwalk(speaker)
@@ -984,7 +1017,8 @@ commands.cmdlist1 = function()
     print("")
     print("CMD LIST")
     print("-------------------------------------------------------------------------------")
-    print("BRING : Brings the selected target to you")
+    print("KILL: Kills the selected target [TOOL REQUIRED]")
+    print("BRING : Brings the selected target to you [TOOL REQUIRED]")
     print("ATTACH: Attaches the selected target to you [TOOL REQUIRED]")
     print("TPTO: Teleports you to the selected target")
     print("TPCLICK: Sets up a teleport-click script with customizable keybinds")
