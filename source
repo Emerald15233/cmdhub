@@ -317,7 +317,7 @@ function getRoot(char)
 end
 
 -- Main float function
-function float(speaker)
+function airwalk(speaker)
     local Floating = false
     local floatName = randomString()
     local RunService = game:GetService("RunService")
@@ -337,7 +337,7 @@ function float(speaker)
             Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0, FloatValue, 0)
 
             -- Notify the user
-            notif('Float Enabled (Q = down & E = up)')
+            notif('Airwalk Enabled, (Q = to go down & E = to go up)')
 
             -- Event connections for key actions (Q and E)
             local qUp, eUp, qDown, eDown
@@ -407,6 +407,34 @@ local function rejoin()
 		TeleportService:Teleport(placeId, player)
 	end
 end
+
+-- Table to store floating state and connections
+local FloatData = {}
+
+function unairwalk(speaker)
+    local pchar = speaker.Character
+    if not pchar then return end
+
+    -- Find and destroy the float part
+    for _, v in pairs(pchar:GetChildren()) do
+        if v:IsA("Part") and v.Size == Vector3.new(2, 0.2, 1.5) and v.Anchored and v.Transparency == 1 then
+            v:Destroy()
+        end
+    end
+
+    -- Disconnect any existing connections
+    if FloatData[speaker] then
+        for _, conn in ipairs(FloatData[speaker].connections or {}) do
+            if conn and conn.Disconnect then
+                conn:Disconnect()
+            end
+        end
+        FloatData[speaker] = nil
+    end
+
+    notif("Airwalk Disabled")
+end
+
 
 local function parseKeybind(keybind)
     tpclicksuccess = false
@@ -933,12 +961,24 @@ wait()
 
 commands.airwalk = function()
     local speaker = game.Players.LocalPlayer
-    float(speaker)
+    airwalk(speaker)
 end
 
 wait()
 
-commands.cmdlist = function()
+commands.unairwalk = function()
+    local speaker = game.Players.LocalPlayer
+    unairwalk(speaker)
+end
+
+wait()
+
+commands.cmdlist1 = function()
+    if dontuse then
+        return
+    end
+    dontuse = true
+    task.wait(.1)
     notif("Check F9 for the list of commands")
     print("")
     print("")
@@ -955,7 +995,10 @@ commands.cmdlist = function()
     print("UNLOOPTP: Stops loop teleporting")
     print("REJOIN/RJ: Rejoins the server")
     print("AIRWALK: Allows you to walk on air")
+    print("UNAIRWALK: Disables airwalk")
     print("-------------------------------------------------------------------------------")
+    wait(.5)
+    dontuse = false
 end
 
 wait()
@@ -997,9 +1040,18 @@ addFrame("     unlooptp (plr)     ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("     rejoin/rj     ") wait(randNum) rollrand()
-
+addFrame("         rejoin/rj          ") wait(randNum) rollrand()
+ 
 task.wait()
+
+addFrame("         airwalk         ") wait(randNum) 
+  
+task.wait()
+
+addFrame("       unairwalk       ") wait(randNum) 
+  
+task.wait()
+
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
