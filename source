@@ -303,6 +303,10 @@ else
 end
 -- func
 
+function reset()
+    speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead)
+end
+
 -- Function to generate a random string
 function randomString()
     local length = math.random(10, 20)
@@ -816,6 +820,13 @@ local function usetsbmove(move)
     end
 end
 
+commands.reset = function()
+    notif("Resetted")
+    reset()
+end
+
+wait()
+
 commands.rejoin = function()
     rejoin()
 end
@@ -1008,7 +1019,7 @@ end
 
 wait()
 
-commands.cmdlist1 = function()
+commands.cmdlist = function()
     if dontuse then
         return
     end
@@ -1033,6 +1044,7 @@ commands.cmdlist1 = function()
     print("AIRWALK: Allows you to walk on air")
     print("UNAIRWALK: Disables airwalk")
     print("KILL: Kills selected target [TOOL REQUIRED]")
+    print("RESET: Resets the speaker's Character")
     print("-------------------------------------------------------------------------------")
     wait(.5)
     dontuse = false
@@ -1090,6 +1102,10 @@ addFrame("       unairwalk       ") wait(randNum) rollrand()
 task.wait()
 
 addFrame("         kill (plr)         ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("         reset           ") wait(randNum) rollrand()
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
