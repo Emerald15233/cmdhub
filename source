@@ -303,6 +303,16 @@ else
 end
 -- func
 
+local function gotocframe(cframe)
+    local player = game.Players.LocalPlayer
+    if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+        return
+    end
+
+    local root = player.Character.HumanoidRootPart
+    root.CFrame = cframe
+end
+
 --// Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -1015,6 +1025,11 @@ end
 wait()
 
 commands.kill = function(plr)
+    if dontuse then
+        return
+    end
+    dontuse = true
+    task.wait(.1)
 	local speaker = game.Players.LocalPlayer
 	local target = findPlayer(plr)
 
@@ -1040,7 +1055,9 @@ commands.kill = function(plr)
 
 	else
 		notif("You need to have an item in your inventory to use this command")
-	end         
+	end
+    task.wait()
+    dontuse = false
 end
 
 wait()
@@ -1060,6 +1077,51 @@ end
 
 wait()
 
+commands.toloc = function(loc)
+    if loc == "bigplatform" then
+        gotocframe(CFrame.new(1028.55798, 481.220215, 23000.375, 0.997213364, 7.31949257e-08, 0.0746019781, -7.33295806e-08, 1, -9.34153754e-10, -0.0746019781, -4.53898119e-09, 0.997213364))
+    elseif loc == "tsbedge" then
+        gotocframe(CFrame.new(-193.688171, 539.585571, -426.296234, 0.38698405, -4.57593679e-08, -0.922086418, 6.23400931e-09, 1, -4.70095927e-08, 0.922086418, 1.24436665e-08, 0.38698405))
+    end
+end
+wait()
+
+commands.copyloc = function()
+    local a = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    setclipboard(tostring(a))
+end
+
+commands.moveset = function(move)
+    if game.PlaceId ~= 10449761463 then
+        error("this command only works on \'The Strongest Battlegrounds.\"")
+        return
+    end
+    if dontuse then return end
+    dontuse = true
+    task.wait(.1)
+    if moveset == "trashcanman" or "trashcan" or "tcm" then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man",true))()
+    elseif moveset == "gojo" then
+        getgenv().FatalCombatSkillLayout = true
+        loadstring(game:HttpGet("https://gist.githubusercontent.com/SonicexePort/d83f3eca5e8092468df1551df09db39a/raw/861f16fbae8fab8803cabfbc01295bb5b687f86a/Death%20Port%20Six%20Eyes%20Public%20Beta"))()
+    elseif moveset == "mahito" then
+        getgenv().Swordm1= true -- set trueif you want have sword thing on mahito m1
+        getgenv().night = false  -- set true if you want night 
+        getgenv().plushie = false ---set true if you want plushie mahito 
+        getgenv().blackflash = true ---set true if you want v1 truly black flash
+        getgenv().chat = false ---set true if you visual to other pov that your mahito
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Kenjihin69/Kenjihin69/refs/heads/main/Mahito%20v2%20sigma%20tp%20exploit'))()
+    elseif moveset == "johndoe" or moveset == "john" or moveset == "jd" then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Luckyfromyoutube/JohnDoe/refs/heads/main/TSBMODEL"))()
+    else
+        warn("invalid moveset, use >cmdlist for the list of movesets")
+    end
+    task.wait(.1)
+    dontuse = true
+end
+
+wait()
+
 commands.cmdlist = function()
     if dontuse then
         return
@@ -1069,8 +1131,7 @@ commands.cmdlist = function()
     notif("Check F9 for the list of commands")
     print("")
     print("")
-    print("CMD LIST")
-    print("-------------------------------------------------------------------------------")
+    print("----------------------------------CMD LIST---------------------------------------------")
     print("KILL: Kills the selected target [TOOL REQUIRED]")
     print("BRING : Brings the selected target to you [TOOL REQUIRED]")
     print("ATTACH: Attaches the selected target to you [TOOL REQUIRED]")
@@ -1088,7 +1149,12 @@ commands.cmdlist = function()
     print("RESET: Resets the speaker's Character")
     print("TPWALK: Teleport walks you with the set speed (NUMBER REQUIRED)")
     print("UNTPWALK: Disables tpwalk")
-    print("-------------------------------------------------------------------------------")
+    print("MOVESET: (MOVESET REQUIRED )Movesets: trashcanman/trashcan/tcm | johndoe,jd,john | gojo | mahito [ TSB ONLY ]")
+    print("COPYLOC: Copies your current CFrame")
+    print("TOLOC: Teleports you to set locations (LOCATION) [LIST OF SET TELEPORTATIONS DOWN BELOW]")
+    print("----------------------------------TP LIST---------------------------------------------")
+    print("tsbedge [TSB ONLY]")
+    print("tsbplatform [TSB ONLY]")
     wait(.5)
     dontuse = false
 end
@@ -1160,11 +1226,22 @@ addFrame("      untpwalk      ") wait(randNum) rollrand()
 
 task.wait()
 
--- addFrame("         reset           ") wait(randNum) rollrand()
+addFrame(" moveset (move) ") wait(randNum) rollrand()
 
 task.wait()
 
--- addFrame("         reset           ") wait(randNum) rollrand()
+addFrame("       copyloc         ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("     toloc (loc)      ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("       tsbbring         ") wait(randNum) rollrand()
+
+task.wait()
+
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
