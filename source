@@ -830,17 +830,16 @@ local function usetsbmove(move)
     local backpack = player.Backpack
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:FindFirstChildOfClass("Humanoid")
-    local toolName = move  -- Tool name in the Backpack
+    local toolName = move 
 
-    -- Check if the tool exists in the Backpack
     local tool = backpack:FindFirstChild(toolName)
 
     if tool then
-        -- Equip the tool if it exists
+
         tool.Parent = character
         humanoid:EquipTool(tool)
 
-        -- Activate the tool (if it has an activation method)
+
         if tool:IsA("Tool") then
             tool:Activate()
         else
@@ -848,10 +847,10 @@ local function usetsbmove(move)
             return
         end
 
-        -- Unequip the tool after use
-        wait(1)  -- Adjust the wait time as needed
-        humanoid:UnequipTools()  -- Unequip the tool
-        tool.Parent = backpack  -- Move the tool back to the backpack
+
+        wait(1) 
+        humanoid:UnequipTools()  
+        tool.Parent = backpack  
     else
         error(toolName .. " not found in Backpack.")
     end
@@ -910,6 +909,10 @@ commands.tsbbring = function(target)
         error("this command only works on \'The Strongest Battlegrounds.\"")
         return
     end
+    if not target then
+        warn("user not found")
+        return
+    end
     local user = game.Players.LocalPlayer
     local a = user.Character.HumanoidRootPart
     local bkp = user.Backpack
@@ -918,12 +921,13 @@ commands.tsbbring = function(target)
     local thirdcd = user.PlayerGui.Hotbar.Backpack.Hotbar["3"].Base:FindFirstChild("Cooldown")
     local fourthcd = user.PlayerGui.Hotbar.Backpack.Hotbar["4"].Base:FindFirstChild("Cooldown")
     local currentpos = a.CFrame
+    local special = false
     local actualpos = CFrame.new(currentpos.Position)  -- Extract position and use it for CFrame.new
 
     if dontuse then
+        warn("ew")
         return
     else
-        print("")
         dontuse = true
     end
 
@@ -937,7 +941,7 @@ commands.tsbbring = function(target)
                 end)
                 task.wait(.2)
                 usetsbmove("Flowing Water") 
-            elseif bkp:FindFirstChild("Lethal Whirlwind Stream") then
+            elseif bkp:FindFirstChild("Lethal Whirlwind Stream") and not secondcd then
                 spawn(function()
                     looptp(target)
                 end)
@@ -947,24 +951,60 @@ commands.tsbbring = function(target)
         else
             error("All your compatible moves are on cooldown, try again later")
             looping = false
+            dontuse = false
             return
         end
     end
 
     if bkp:FindFirstChild("Bullet Barrage") or bkp:FindFirstChild("Head First") then
-        if not fourthcd then
-            if bkp:FindFirstChild("Head First") then
+        if not fourthcd or not firstcd then
+            if bkp:FindFirstChild("Head First") and not fourthcd then
                 spawn(function()
                     looptp(target)
                 end)
                 usetsbmove("Head First")
+            elseif bkp:FindFirstChild("Bullet Barrage") and not firstcd then
+                spawn(function()
+                    loopbehind(target)
+                end)
+                task.wait(.2)
+                usetsbmove("Bullet Barrage")
+                task.wait(.2)
             end
         else
             error("All your compatible moves are on cooldown, try again later")
+            dontuse = false
             return
         end
     end
 
+    if bkp:FindFirstChild("Beatdown") or bkp:FindFirstChild("Homerun") then
+        if not secondcd then
+            if bkp:FindFirstChild("Beatdown") and not secondcd then
+                spawn(function()
+                    loopbehind(target)
+                end)
+                task.wait(.2)
+                usetsbmove("Beatdown")
+            end
+        else
+            warn("All your compatible moves are on cooldown, try again later")
+            dontuse = false
+            return
+        end
+    end
+
+    if bkp:FindFirstChild("Atmos Cleave") then
+        if not secondcd then   
+            if bkp:FindFirstChild("Atmos Cleave") and not secondcd then
+                spawn(function()
+                    loopbehind(target)
+                end)
+                task.wait(.2)
+                usetsbmove("Atmos Cleave")
+            end
+        end
+    end
     task.wait(.3)
     looping = false
     a.CFrame = currentpos
