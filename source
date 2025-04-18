@@ -303,6 +303,33 @@ else
 end
 -- func
 
+--// Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local tpwalking = false
+local hb = RunService.Heartbeat
+local speaker = Players.LocalPlayer
+local function isNumber(value)
+	return tonumber(value) ~= nil
+end
+
+function tpwalk(speed)
+	tpwalking = true
+	local chr = speaker.Character or speaker.CharacterAdded:Wait()
+	local hum = chr:FindFirstChildWhichIsA("Humanoid")
+
+	while tpwalking and chr and hum and hum.Parent do
+		local delta = hb:Wait()
+		if hum.MoveDirection.Magnitude > 0 then
+			local moveSpeed = 10 -- Default speed multiplier
+			if speed and isNumber(speed) then
+				moveSpeed = tonumber(speed) * 10
+			end
+			chr:TranslateBy(hum.MoveDirection * delta * moveSpeed)
+		end
+	end
+end
+
 function reset()
     speaker.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead)
 end
@@ -820,6 +847,20 @@ local function usetsbmove(move)
     end
 end
 
+commands.tpwalk = function(num)
+    notif("set tpwalk to ".. num)  
+    tpwalk(num)  
+end
+
+wait()
+
+commands.untpwalk = function()
+    tpwalking = false
+    notif("disabled tpwalk")
+end
+
+wait()
+
 commands.reset = function()
     notif("Resetted")
     reset()
@@ -1045,6 +1086,8 @@ commands.cmdlist = function()
     print("UNAIRWALK: Disables airwalk")
     print("KILL: Kills selected target [TOOL REQUIRED]")
     print("RESET: Resets the speaker's Character")
+    print("TPWALK: Teleport walks you with the set speed (NUMBER REQUIRED)")
+    print("UNTPWALK: Disables tpwalk")
     print("-------------------------------------------------------------------------------")
     wait(.5)
     dontuse = false
@@ -1106,6 +1149,22 @@ addFrame("         kill (plr)         ") wait(randNum) rollrand()
 task.wait()
 
 addFrame("         reset           ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("    tpwalk (num)     ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("      untpwalk      ") wait(randNum) rollrand()
+
+task.wait()
+
+-- addFrame("         reset           ") wait(randNum) rollrand()
+
+task.wait()
+
+-- addFrame("         reset           ") wait(randNum) rollrand()
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
