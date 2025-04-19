@@ -906,7 +906,7 @@ wait()
 
 commands.tsbbring = function(target)
     if game.PlaceId ~= 10449761463 then
-        error("this command only works on \'The Strongest Battlegrounds.\"")
+        error("this command only works on The Strongest Battlegrounds.")
         return
     end
     if not target then
@@ -1051,6 +1051,13 @@ end
 
 wait()
 
+commands.silentchat = function(e)
+    notif("Chatted ".. e .." Silently")
+    game.Players:Chat(e)
+end
+
+wait()
+
 commands.breakvelocity = function()
     breakvelocity()
     notif("broke velocity")
@@ -1133,7 +1140,7 @@ end
 
 commands.moveset = function(move)
     if game.PlaceId ~= 10449761463 then
-        error("this command only works on \'The Strongest Battlegrounds.\"")
+        error("this command only works on The Strongest Battlegrounds.")
         return
     end
     if dontuse then return end
