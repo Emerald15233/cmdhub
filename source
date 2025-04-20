@@ -303,6 +303,48 @@ else
 end
 -- func
 
+local function getfullname(name)
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if string.lower(player.Name):find(string.lower(name)) or string.lower(player.DisplayName):find(string.lower(name)) then
+            return player.Name -- or player.DisplayName if you prefer
+        end
+    end
+    return nil -- if no player found
+end
+
+
+local savedCamPos = nil
+local savedCamLookVector = nil
+
+function viewcurrentpos()
+	local cam = workspace.CurrentCamera
+	local char = game.Players.LocalPlayer.Character
+	local hrp = char and char:FindFirstChild("HumanoidRootPart")
+
+	if not hrp then
+		warn("No character to get position from.")
+		return
+	end
+
+	-- Save current camera orientation
+	savedCamPos = cam.CFrame.Position
+	savedCamLookVector = cam.CFrame.LookVector
+
+	-- Set camera to scriptable and freeze it
+	cam.CameraType = Enum.CameraType.Scriptable
+	cam.CFrame = CFrame.lookAt(hrp.Position + Vector3.new(0, 5, 10), hrp.Position)
+
+	notif("Now viewing from current position.")
+end
+
+function unview()
+	local cam = workspace.CurrentCamera
+	cam.CameraType = Enum.CameraType.Custom
+	cam.CameraSubject = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+
+	notif("Camera reset to normal.")
+end
+
 local function gotocframe(cframe)
     local player = game.Players.LocalPlayer
     if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
@@ -652,6 +694,52 @@ local function looptp(e)
     end
 end
 
+local function undertp(e)
+	local localPlayer = game.Players.LocalPlayer
+	local target = findPlayer(e)
+
+	if not target then
+		error("user not found")
+		return
+	end
+
+	looping = true
+	notif("Teleporting behind and under " .. target.Name)
+
+	while looping do
+		target = findPlayer(e)
+
+		if not target or not target.Character then
+			notif("Target missing/left the game")
+			looping = false
+			break
+		end
+
+		local rootPart = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+		local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+
+		if rootPart and targetRoot then
+			-- Position the speaker under the target, behind them
+			local offset = Vector3.new(0, -4.5, -1.5)  -- Under and slightly behind the target
+			local targetPos = targetRoot.Position + offset
+
+			-- Calculate the direction the speaker should face (opposite the target's front)
+			local lookAtPos = targetRoot.Position + Vector3.new(0, 2, 5)  -- Tilt in front of the target for head alignment
+			local lookCFrame = CFrame.lookAt(targetPos, lookAtPos)
+
+			-- Apply the new CFrame to the speaker's HumanoidRootPart
+			rootPart.CFrame = lookCFrame
+		else
+			error("Couldn't find HumanoidRootPart")
+			looping = false
+			break
+		end
+
+		task.wait()
+	end
+end
+
+
 local function hasTool(player)
     return player.Backpack:FindFirstChildOfClass("Tool") or player.Character:FindFirstChildOfClass("Tool")
 end
@@ -857,8 +945,13 @@ local function usetsbmove(move)
 end
 
 commands.tpwalk = function(num)
+    if dontuse then return end
+    dontuse = true
+    task.wait(.2)
     notif("set tpwalk to ".. num)  
-    tpwalk(num)  
+    tpwalk(num)
+    task.wait(.2)
+    dontuse = false
 end
 
 wait()
@@ -904,6 +997,18 @@ end
 
 wait()
 
+commands.jerk = function()
+    local character = game.Players.LocalPlayer.Character
+    local isR6 = character:FindFirstChild("Torso") ~= nil
+    if isR6 then
+        loadstring(game:HtppGet('https://pastefy.app/wa3v2Vgm/raw'))()
+    else
+        loadstring(game:HttpGet('https://pastefy.app/YZoglOyJ/raw'))()
+    end
+end
+
+wait()
+
 commands.tsbbring = function(target)
     if game.PlaceId ~= 10449761463 then
         error("this command only works on The Strongest Battlegrounds.")
@@ -913,6 +1018,8 @@ commands.tsbbring = function(target)
         warn("user not found")
         return
     end
+    local targetname = getfullname(target)
+    local live = game.Workspace.Live:FindFirstChild(targetname)
     local user = game.Players.LocalPlayer
     local a = user.Character.HumanoidRootPart
     local bkp = user.Backpack
@@ -923,7 +1030,6 @@ commands.tsbbring = function(target)
     local currentpos = a.CFrame
     local special = false
     local actualpos = CFrame.new(currentpos.Position)  -- Extract position and use it for CFrame.new
-
     if dontuse then
         warn("ew")
         return
@@ -937,15 +1043,23 @@ commands.tsbbring = function(target)
         if not firstcd or not secondcd then
             if bkp:FindFirstChild("Flowing Water") and not firstcd then
                 spawn(function()
-                    looptp(target)
+                    undertp(target)
                 end)
                 task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
                 usetsbmove("Flowing Water") 
             elseif bkp:FindFirstChild("Lethal Whirlwind Stream") and not secondcd then
                 spawn(function()
                     looptp(target)
                 end)
                 task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
                 usetsbmove("Lethal Whirlwind Stream")
             end
         else
@@ -962,12 +1076,20 @@ commands.tsbbring = function(target)
                 spawn(function()
                     looptp(target)
                 end)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
                 usetsbmove("Head First")
             elseif bkp:FindFirstChild("Bullet Barrage") and not firstcd then
                 spawn(function()
                     loopbehind(target)
                 end)
                 task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
                 usetsbmove("Bullet Barrage")
                 task.wait(.2)
             end
@@ -1177,6 +1299,11 @@ end
 
 wait()
 
+commands.undertp = function(plr)
+    undertp(plr)
+end
+wait()
+
 commands.cmdlist = function()
     if dontuse then
         return
@@ -1207,6 +1334,9 @@ commands.cmdlist = function()
     print("MOVESET: (MOVESET REQUIRED )Movesets: trashcanman/trashcan/tcm | johndoe,jd,john | gojo | mahito [ TSB ONLY ]")
     print("COPYLOC: Copies your current CFrame")
     print("TOLOC: Teleports you to set locations (LOCATION) [LIST OF SET TELEPORTATIONS DOWN BELOW]")
+    print("SILENTCHAT: Silently Chats a message (MSG)")
+    print("JERK: uhhhh")
+    print("UNDERTP: Teleports under the target (plr) [ >unlooptp to stop ]")
     print("----------------------------------TP LIST---------------------------------------------")
     print("tsbedge [TSB ONLY]")
     print("tsbplatform / tpf [TSB ONLY]")
@@ -1260,45 +1390,52 @@ addFrame("         rejoin/rj          ") wait(randNum) rollrand()
  
 task.wait()
 
-addFrame("         airwalk         ") wait(randNum) rollrand()
+addFrame("          airwalk          ") wait(randNum) rollrand()
   
 task.wait()
 
-addFrame("       unairwalk       ") wait(randNum) rollrand()
+addFrame("        unairwalk        ") wait(randNum) rollrand()
   
 task.wait()
 
-addFrame("         kill (plr)         ") wait(randNum) rollrand()
+addFrame("          kill (plr)          ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("         reset           ") wait(randNum) rollrand()
+addFrame("          reset            ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("    tpwalk (num)     ") wait(randNum) rollrand()
+addFrame("     tpwalk (num)      ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("      untpwalk      ") wait(randNum) rollrand()
+addFrame("        untpwalk        ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame(" moveset (move) ") wait(randNum) rollrand()
+addFrame("  moveset (move)  ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("       copyloc         ") wait(randNum) rollrand()
+addFrame("        copyloc          ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("     toloc (loc)      ") wait(randNum) rollrand()
+addFrame("       toloc (loc)        ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("       tsbbring         ") wait(randNum) rollrand()
+addFrame("             jerk             ") wait(randNum) rollrand()
 
 task.wait()
+
+addFrame("  silentchat (msg)  ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("     undertp (plr)     ") wait(randNum) rollrand()
+ 
 
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
