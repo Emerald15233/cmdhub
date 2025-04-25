@@ -1071,14 +1071,29 @@ end
 
 wait()
 
+commands.loadiy = function()
+    spawn(function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    end)
+end
+
+wait()
+
 commands.jerk = function()
+    if dontuse then return end
+    dontuse = true
+    task.wait(.2)
     local character = game.Players.LocalPlayer.Character
     local isR6 = character:FindFirstChild("Torso") ~= nil
     if isR6 then
-        loadstring(game:HtppGet('https://pastefy.app/wa3v2Vgm/raw'))()
+        notif("R6 Detected.")
+        loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
     else
-        loadstring(game:HttpGet('https://pastefy.app/YZoglOyJ/raw'))()
+        notif("R15 Detected.")
+        loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
     end
+    task.wait(.2)
+    dontuse = false
 end
 
 wait()
@@ -1600,9 +1615,6 @@ addFrame("      lockon (plr)      ") wait(randNum) rollrand()
 task.wait()
 
 addFrame("        unlockon        ") wait(randNum) rollrand()
-
-
- 
 
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
