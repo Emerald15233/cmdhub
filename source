@@ -180,6 +180,7 @@ Base.Draggable = true
 
 -- var
 
+local locking = false
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local cmddesc = {  }
@@ -301,7 +302,61 @@ if speaker.Name == "EeRIlIlIllIlIlIl" or speaker.Name == "piepiepie894" or speak
 else
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
 end
+
+local function getPlayer(name)
+    local foundPlayers = {}
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if string.find(string.lower(player.Name), string.lower(name)) or string.find(string.lower(player.DisplayName), string.lower(name)) then
+            table.insert(foundPlayers, player)
+        end
+    end
+    return foundPlayers
+end
+
 -- func
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- Saves original zoom settings
+local preMaxZoom = LocalPlayer.CameraMaxZoomDistance
+local preMinZoom = LocalPlayer.CameraMinZoomDistance
+
+-- Main lookAt function
+function lookAt(username)
+	local matches = getPlayer(username)
+	if #matches == 0 then
+		warn("No player found for:", username)
+		return
+	end
+
+	local targetPlayer = matches[1] -- use the first match
+	local targetChar = targetPlayer.Character
+	local targetHead = targetChar and targetChar:FindFirstChild("Head")
+
+	if not targetHead then
+		warn("Target does not have a head.")
+		return
+	end
+
+	-- Make camera look at target's head
+	Camera.CFrame = CFrame.new(Camera.CFrame.Position, targetHead.Position)
+
+	-- Optional: restore zoom after a short delay
+	task.delay(0.5, function()
+		LocalPlayer.CameraMaxZoomDistance = preMaxZoom
+		LocalPlayer.CameraMinZoomDistance = preMinZoom
+	end)
+end
+
+function execCmd(name)
+    local cmd = commands[name]
+    if cmd and type(cmd) == "function" then
+        cmd()
+    else
+        error("Command not found: " .. tostring(name))
+    end
+end
 
 local function getfullname(name)
     for _, player in ipairs(game.Players:GetPlayers()) do
@@ -814,16 +869,6 @@ local function breakvelocity()
     end
 end
 
-local function getPlayer(name)
-    local foundPlayers = {}
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if string.find(string.lower(player.Name), string.lower(name)) or string.find(string.lower(player.DisplayName), string.lower(name)) then
-            table.insert(foundPlayers, player)
-        end
-    end
-    return foundPlayers
-end
-
 local function tpto(TARGET)
     local players = getPlayer(TARGET)
     if #players == 0 then
@@ -944,6 +989,34 @@ local function usetsbmove(move)
     end
 end
 
+commands.autolock = function()
+    if dontuse then return end
+    dontuse = true
+    task.wait(.2)
+    loadstring(game:HttpGet('https://pastebin.com/raw/c2tsb2c4'))()
+    notif("Press E to toggle autolock")
+    task.wait(.5)
+    dontuse = false
+end
+
+wait()
+
+commands.lockon = function(plr)
+    locking = true
+    while locking do
+        lookAt(plr)
+        task.wait()
+    end
+end
+
+wait()
+
+commands.unlockon = function()
+    locking = false
+end
+
+wait()
+
 commands.tpwalk = function(num)
     if dontuse then return end
     dontuse = true
@@ -1031,6 +1104,8 @@ commands.tsbbring = function(target)
     local currentpos = a.CFrame
     local special = false
     local actualpos = CFrame.new(currentpos.Position)  -- Extract position and use it for CFrame.new
+    local normmax = game.Players.LocalPlayer.CameraMaxZoomDistance
+    local normmin = game.Players.LocalPlayer.CameraMinZoomDistance
     if dontuse then
         warn("ew")
         return
@@ -1108,6 +1183,10 @@ commands.tsbbring = function(target)
                     loopbehind(target)
                 end)
                 task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
                 usetsbmove("Beatdown")
             end
         else
@@ -1121,16 +1200,46 @@ commands.tsbbring = function(target)
         if not secondcd then   
             if bkp:FindFirstChild("Atmos Cleave") and not secondcd then
                 spawn(function()
-                    loopbehind(target)
+                    undertp(target)
                 end)
                 task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
                 usetsbmove("Atmos Cleave")
             end
+        end
+    end
+
+    if bkp:FindFirstChild("Crushing Pull") or bkp:FindFirstChild("Windstorm Fury") then
+        if bkp:FindFirstChild("Crushing Pull") and not firstcd then
+            spawn(function()
+                undertp(target)
+            end)
+            task.wait(.2)
+            if live:FindFirstChild("M1ing") then
+                notif("Waiting for target to stop m1ing...")
+                repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+            end
+            user.CameraMaxZoomDistance = 0.5
+            wait()
+            spawn(function()
+                usetsbmove("Crushing Pull")
+            end)
+            lookAt(target)
+            special = true
         end
     end
     task.wait(.3)
     looping = false
     a.CFrame = currentpos
+    if special then
+        user.CameraMinZoomDistance = 20
+        wait()
+        user.CameraMaxZoomDistance = normmax
+        user.CameraMinZoomDistance = normmin
+    end
     dontuse = false
 end
 
@@ -1265,6 +1374,9 @@ end
 wait()
 
 commands.scl = function()
+    if dontuse then return end
+    dontuse = true
+    task.wait(.5)
     local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if root then
         local pos = root.Position
@@ -1272,11 +1384,16 @@ commands.scl = function()
         notif(cframevar)
         setclipboard(cframevar)
     end
+    task.wait(.5)
+    dontuse = false
 end
 
 wait()
 
 commands.simplecopyloc = function()
+    if dontuse then return end
+    dontuse = true
+    task.wait(.5)
     local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if root then
         local pos = root.Position
@@ -1284,6 +1401,8 @@ commands.simplecopyloc = function()
         notif(cframevar)
         setclipboard(cframevar)
     end
+    task.wait(.5)
+    dontuse = false
 end
 
 wait()
@@ -1362,8 +1481,11 @@ commands.cmdlist = function()
     print("TOLOC: Teleports you to set locations (LOCATION) [LIST OF SET TELEPORTATIONS DOWN BELOW]")
     print("SILENTCHAT: Silently Chats a message (MSG)")
     print("JERK: uhhhh")
-    print("UNDERTP: Teleports under the target (plr) [ >unlooptp to stop ]")
+    print("UNDERTP: Teleports under the target [ >unlooptp to stop ]")
     print("SIMPLECOPYLOC / SCL: Copies the cframe with a simple format, no e+ and only front three coords")
+    print("AUTOLOCK: Auto locks onto the player your cursor is pointing to")
+    print("LOCKON: Locks your camera on the selected target")
+    print("UNLOCKON: Disables lockon")
     print("----------------------------------TP LIST---------------------------------------------")
     print("tsbedge [TSB ONLY]")
     print("bigplatform / bpf [TSB ONLY]")
@@ -1466,6 +1588,20 @@ addFrame("     undertp (plr)     ") wait(randNum) rollrand()
 task.wait()
 
 addFrame(" simplecopyloc/scl ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        autolock        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("      lockon (plr)      ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
+
  
 
 
