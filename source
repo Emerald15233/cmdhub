@@ -1071,14 +1071,6 @@ end
 
 wait()
 
-commands.loadiy = function()
-    spawn(function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
-    end)
-end
-
-wait()
-
 commands.jerk = function()
     if dontuse then return end
     dontuse = true
@@ -1104,7 +1096,7 @@ commands.tsbbring = function(target)
         return
     end
     if not target then
-        warn("user not found")
+        error("user not found")
         return
     end
     local targetname = getfullname(target)
@@ -1122,7 +1114,7 @@ commands.tsbbring = function(target)
     local normmax = game.Players.LocalPlayer.CameraMaxZoomDistance
     local normmin = game.Players.LocalPlayer.CameraMinZoomDistance
     if dontuse then
-        warn("ew")
+        error("ew")
         return
     else
         dontuse = true
@@ -1191,8 +1183,8 @@ commands.tsbbring = function(target)
         end
     end
 
-    if bkp:FindFirstChild("Beatdown") or bkp:FindFirstChild("Homerun") then
-        if not secondcd then
+    if bkp:FindFirstChild("Beatdown") or bkp:FindFirstChild("Homerun") or bkp:FindFirstChild("Foul Ball") then
+        if not secondcd or not firstcd or not fourthcd then
             if bkp:FindFirstChild("Beatdown") and not secondcd then
                 spawn(function()
                     loopbehind(target)
@@ -1203,9 +1195,32 @@ commands.tsbbring = function(target)
                     repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
                 end
                 usetsbmove("Beatdown")
+            elseif bkp:FindFirstChild("Homerun") and not firstcd then
+                spawn(function()
+                    loopbehind(target)
+                end)
+                task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
+                spawn(function()
+                    usetsbmove("Homerun")
+                end)
+                wait(.5)
+            elseif bkp:FindFirstChild("Foul Ball") and not fourthcd then
+                spawn(function()
+                    loopbehind(target)
+                end)
+                task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
+                    repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
+                end
+                usetsbmove("Foul Ball")
             end
         else
-            warn("All your compatible moves are on cooldown, try again later")
+            error("All your compatible moves are on cooldown, try again later")
             dontuse = false
             return
         end
@@ -1238,23 +1253,24 @@ commands.tsbbring = function(target)
                 repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
             end
             user.CameraMaxZoomDistance = 0.5
+            lookAt(target)
             wait()
             spawn(function()
                 usetsbmove("Crushing Pull")
             end)
-            lookAt(target)
-            special = true
+            spawn(function()
+                task.wait(1)
+                user.CameraMaxZoomDistance = 21
+                user.CameraMinZoomDistance = 20
+                wait(.1)
+                user.CameraMaxZoomDistance = normmax
+                user.CameraMinZoomDistance = normmin
+            end)
         end
     end
     task.wait(.3)
     looping = false
     a.CFrame = currentpos
-    if special then
-        user.CameraMinZoomDistance = 20
-        wait()
-        user.CameraMaxZoomDistance = normmax
-        user.CameraMinZoomDistance = normmin
-    end
     dontuse = false
 end
 
