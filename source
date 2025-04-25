@@ -974,6 +974,7 @@ commands.rejoin = function()
     rejoin()
 end
 wait()
+
 commands.rj = function()
     rejoin()
 end
@@ -1219,7 +1220,7 @@ commands.kill = function(plr)
 			if hrp then
 				hrp.CFrame = CFrame.new(999999, workspace.FallenPartsDestroyHeight + 5, 999999)
 			end
-		until not getRoot(target.Character)
+		until not getRoot(target.Character) or not getRoot(speaker.Character)
         notif("Killed target")
         speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = currentpos
 
@@ -1262,6 +1263,31 @@ commands.toloc = function(loc)
     end
 end
 wait()
+
+commands.scl = function()
+    local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if root then
+        local pos = root.Position
+        local cframevar = string.format("%.0f, %.0f, %.0f", pos.X, pos.Y, pos.Z)
+        notif(cframevar)
+        setclipboard(cframevar)
+    end
+end
+
+wait()
+
+commands.simplecopyloc = function()
+    local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if root then
+        local pos = root.Position
+        local cframevar = string.format("%.0f, %.0f, %.0f", pos.X, pos.Y, pos.Z)
+        notif(cframevar)
+        setclipboard(cframevar)
+    end
+end
+
+wait()
+
 
 commands.copyloc = function()
     local a = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
@@ -1337,6 +1363,7 @@ commands.cmdlist = function()
     print("SILENTCHAT: Silently Chats a message (MSG)")
     print("JERK: uhhhh")
     print("UNDERTP: Teleports under the target (plr) [ >unlooptp to stop ]")
+    print("SIMPLECOPYLOC / SCL: Copies the cframe with a simple format, no e+ and only front three coords")
     print("----------------------------------TP LIST---------------------------------------------")
     print("tsbedge [TSB ONLY]")
     print("bigplatform / bpf [TSB ONLY]")
@@ -1435,6 +1462,10 @@ addFrame("  silentchat (msg)  ") wait(randNum) rollrand()
 task.wait()
 
 addFrame("     undertp (plr)     ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame(" simplecopyloc/scl ") wait(randNum) rollrand()
  
 
 
