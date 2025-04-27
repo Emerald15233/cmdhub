@@ -1452,7 +1452,7 @@ end
 
 wait()
 
-commands.connect = function(plr)
+commands.connect1 = function(plr)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
@@ -1465,6 +1465,7 @@ commands.connect = function(plr)
     requestno = false
     if not game.Players:FindFirstChild(target) then
         error("invalid target")
+        dontuse = false
         return
     end
     notif("Connecting to ".. target)
@@ -1478,6 +1479,7 @@ commands.connect = function(plr)
     repeat wait() until respondedmessage == true or timer == 5
     if not respondedmessage then 
         error("Target is not using this script.")
+        dontuse = false
         return
     end
     sc("..getrequestername2834 ".. speakername)
