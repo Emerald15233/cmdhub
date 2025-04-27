@@ -348,7 +348,6 @@ function ConnectP5(plr)
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..checkforusingthis218" and message then
-			if not message == speakersname then return end
             sc("..confirmationforconnect8172")
 		end
 	end)
@@ -1452,7 +1451,7 @@ end
 
 wait()
 
-commands.connect1 = function(plr)
+commands.connect2 = function(plr)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
