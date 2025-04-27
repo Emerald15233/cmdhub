@@ -1452,7 +1452,7 @@ end
 
 wait()
 
-commands.connect3 = function(plr)
+commands.connect4 = function(plr)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
@@ -1460,6 +1460,7 @@ commands.connect3 = function(plr)
     local target = getfullname(plr)
     local timer = 0
     local speakername = game.Players.LocalPlayer.Name
+    respondedmessage = false
     requestyes = false
     requestno = false
     if not game.Players:FindFirstChild(target) then
@@ -1499,6 +1500,7 @@ commands.connect3 = function(plr)
         notif("Closing request...")
     end
     task.wait(.2)
+    dontuse = false
 end
 
 wait()
