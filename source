@@ -1425,7 +1425,7 @@ commands.connect = function(plr)
     local returntimer = false
     local target = getfullname(plr)
     local speakername = game.Players.LocalPlayer.Name
-    if not game.Players:FindFirstChild("target") then
+    if not game.Players:FindFirstChild(target) then
         error("invalid target")
         return
     end
@@ -1446,7 +1446,7 @@ commands.connect = function(plr)
     elseif requestno then
         notif(target.. "declined the request")
     elseif returntimer then
-        error("Failed to fetch target's request")
+        error("Failed to fetch target's response")
         notif("Closing request...")
     end
 end
