@@ -244,7 +244,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.0")
+notif("Version 1.0.1")
 
 
 local function rollrand()
@@ -349,6 +349,8 @@ function ConnectP5(plr)
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..checkforusingthis218" and message then
+            if not message == speakersname then return end
+            notif("lalalal")
             sc("..confirmationforconnect8172")
 		end
 	end)
@@ -1452,7 +1454,7 @@ end
 
 wait()
 
-commands.connect = function(plr)
+commands.connect1 = function(plr)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
@@ -1469,7 +1471,7 @@ commands.connect = function(plr)
         return
     end
     notif("Connecting to ".. target)
-    sc("..checkforusingthis218")
+    sc("..checkforusingthis218 ".. target)
     spawn(function()
         for i = 1,5 do
             wait(1)
@@ -1851,6 +1853,7 @@ end
 game:GetService("Players").PlayerAdded:Connect(function(plr)
 	ConnectP1(plr)
     ConnectP2(plr)
+    ConnectP5(plr)
 end)
 
 
