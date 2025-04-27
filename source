@@ -327,7 +327,7 @@ function ConnectP3(plr)
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..askforconnect8172" and message then
-			if message ~= speakersname then error("ew") return end
+			if not message == speakersname then error("meowmeow") return end
             connectoptionperms = true
             notif(requestername .. "Is requesting to connect")
             notif("Type >yes to accept, >no to decline. This request lasts for 10 seconds")
@@ -367,6 +367,11 @@ local function getPlayer(name)
 end
 
 -- func
+
+function sc(silentmsg)
+    game.Players:Chat(silentmsg)
+end
+
 
 function chatMessage(str)
     str = tostring(str)
@@ -1421,7 +1426,7 @@ end
 
 wait()
 
-commands.connect = function(plr)
+commands.connect1 = function(plr)
     local returntimer = false
     local target = getfullname(plr)
     local speakername = game.Players.LocalPlayer.Name
@@ -1431,9 +1436,9 @@ commands.connect = function(plr)
     end
     notif("Connecting to ".. target)
     task.wait(1)
-    game.Players:Chat("..getrequestername2834 ".. speakername)
+    sc("..getrequestername2834 ".. speakername)
     task.wait(.1)
-    game.Players:Chat("..askforconnect8172 ".. target)
+    sc("..askforconnect8172 ".. target)
     wait()
     notif("Waiting for response...")
     spawn(function()
