@@ -1452,7 +1452,7 @@ end
 
 wait()
 
-commands.connect4 = function(plr)
+commands.connect = function(plr)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
