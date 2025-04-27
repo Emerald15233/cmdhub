@@ -244,6 +244,7 @@ function error(msg)
 end
 
 notif("Starting up...")
+notif("Version 1.0.0")
 
 
 local function rollrand()
@@ -1451,7 +1452,7 @@ end
 
 wait()
 
-commands.connect2 = function(plr)
+commands.connect = function(plr)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
