@@ -347,7 +347,7 @@ function ConnectP5(plr)
     if plr == playerA then return end
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
-		if command == "..askforconnect8172" and message then
+		if command == "..checkforusingthis218" and message then
 			if not message == speakersname then return end
             sc("..confirmationforconnect8172")
 		end
