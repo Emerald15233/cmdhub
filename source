@@ -1061,7 +1061,7 @@ commands.yes = function()
     local speakername = game.Players.LocalPlayer.Name
     if connectoptionperms then
         notif("Accepted request")
-        sc("..requestaccept122")
+        game.Players:Chat("..requestaccept122")
         connectoptionperms = false
     else
         notif("No requests to accept")
@@ -1075,7 +1075,7 @@ commands.no = function()
     local speakername = game.Players.LocalPlayer.Name
     if connectoptionperms then
         notif("Declined request")
-        sc("..requestdecline122")
+        game.Players:Chat("..requestdecline122")
     else
         notif("No requests to decline")
     end
@@ -1428,9 +1428,7 @@ end
 
 wait()
 
-commands.connect = function(plr)
-    requestyes = false
-    requestno = false
+commands.connect1 = function(plr)
     local returntimer = false
     local target = getfullname(plr)
     local speakername = game.Players.LocalPlayer.Name
