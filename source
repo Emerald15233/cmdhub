@@ -1428,7 +1428,7 @@ end
 
 wait()
 
-commands.connect1 = function(plr)
+commands.connect = function(plr)
     local returntimer = false
     local target = getfullname(plr)
     local speakername = game.Players.LocalPlayer.Name
