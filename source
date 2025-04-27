@@ -327,12 +327,12 @@ function ConnectP3(plr)
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..askforconnect8172" and message then
-			if not message == speakersname then error("meowmeow") return end
+			if not message == speakersname then return end
             connectoptionperms = true
             notif(requestername .. "Is requesting to connect")
             notif("Type >yes to accept, >no to decline. This request lasts for 10 seconds")
             wait(10)
-            if connectoptionperms == false then
+            if connectoptionperms then
                 notif("Time ran out. Declined request")
                 game.Players:Chat("..requestdecline122")
             end
@@ -350,7 +350,7 @@ function ConnectP4(plr)
             requestyes = false
          elseif msg == "..requestdecline122" then
             requestno = true
-            task.wait(.2)
+            task.wait(2)
             requestno = false
          end
  	end)
@@ -1062,8 +1062,10 @@ commands.yes = function()
     if connectoptionperms then
         notif("Accepted request")
         game.Players:Chat("..requestaccept122")
+        connectoptionperms = false
     else
         notif("No requests to accept")
+        connectoptionperms = false
     end
 end
 
@@ -1426,7 +1428,7 @@ end
 
 wait()
 
-commands.connect1 = function(plr)
+commands.connect = function(plr)
     local returntimer = false
     local target = getfullname(plr)
     local speakername = game.Players.LocalPlayer.Name
@@ -1449,7 +1451,7 @@ commands.connect1 = function(plr)
     if requestyes then
         notif(target .." accepted the request")
     elseif requestno then
-        notif(target.. "declined the request")
+        notif(target .. "declined the request")
     elseif returntimer then
         error("Failed to fetch target's response")
         notif("Closing request...")
