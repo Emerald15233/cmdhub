@@ -401,11 +401,10 @@ function ConnectP6(plr)
 end
 
 function ConnectP7(plr)
-    if plr == playerA then return end
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..".. speakersname .."1215" and message then
-            if not message == "-=-~-..-=)(^27311" then
+            if message ~= "-=-~-..-=)(^27311" then
                 notif(groupowner .." has invited you to their team as ".. message)
                 teaminviteoption = true
                 task.wait(.5)
@@ -1491,8 +1490,6 @@ commands.teaminvite = function(plr, nick)
     local target = getfullname(plr)
     local speakername = game.Players.LocalPlayer.Name
     respondedmessage = false
-    if dontuse then return end
-    dontuse = true
     task.wait(.2)
     if not game.Players:FindFirstChild(target) then
         error("invalid target")
