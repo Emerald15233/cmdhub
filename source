@@ -245,7 +245,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.5")
+notif("Version 1.0.6")
 
 
 local function rollrand()
@@ -384,7 +384,6 @@ function ConnectP4(plr)
             end)
          elseif msg == "..requestdecline122" then
             requestno = true
-            notif("no")
             spawn(function()
                 task.wait(2)
                 requestno = false
@@ -396,8 +395,7 @@ function ConnectP4(plr)
                 respondedmessage = false
             end)
         elseif msg == "..".. speakersname .."1214" then
-            notif("imagine no nick")
-            nick = nil
+            givennick = nil
         end
  	end)
  end
@@ -1490,7 +1488,7 @@ commands.meow = function(args)
 end
 
 
-commands.teaminvite2 = function(args)
+commands.teaminvite3 = function(args)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
