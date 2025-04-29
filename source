@@ -180,7 +180,6 @@ Base.Draggable = true
 
 -- var
 
-local teaminviteoption = false
 local connectionwithplr = false
 local respondedmessage = false
 local requestyes = false
@@ -246,7 +245,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.4")
+notif("Version 1.0.3")
 
 
 local function rollrand()
@@ -328,6 +327,21 @@ function ConnectP1(plr)
 	end)
 end
 
+local givennick = nil
+function ConnectP6(plr)
+    if plr == playerA then return end
+	plr.Chatted:Connect(function(msg)
+		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
+		if command == "..".. speakersname .."1215" and message then
+            givennick = message
+		elseif command == "..".. speakersname .."1214" and message then
+            if message == "nonicklal" then
+                givennick = nil
+            end
+        end
+	end)
+end
+
 function ConnectP3(plr)
     if plr == playerA then return end
 	plr.Chatted:Connect(function(msg)
@@ -335,9 +349,14 @@ function ConnectP3(plr)
 		if command == "..askforconnect8172" and message then
 			if not message == speakersname then return end
             connectoptionperms = true
-            notif(requestername .. " Is requesting to connect")
-            notif("Type >yes to accept, >no to decline. This request lasts for 10 seconds")
-            wait(10)
+            if givennick then
+                notif(requestername .. " has invited you to their team as ".. givennick)
+                notif("Type >yes to accept, >no to decline. This request lasts for 25 seconds")
+            else
+                notif(requestername .. " has invited you to their team ")
+                notif("Type >yes to accept, >no to decline. This request lasts for 25 seconds")
+            end
+            wait(25)
             if connectoptionperms then
                 notif("Time ran out. Declined request")
                 sc("..requestdecline122")
@@ -352,6 +371,7 @@ function ConnectP5(plr)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..checkforusingthis218" and message then
             if not message == speakersname then return end
+            notif("lalalal")
             sc("..confirmationforconnect8172")
 		end
 	end)
@@ -382,42 +402,6 @@ function ConnectP4(plr)
         end
  	end)
  end
-
-local groupowner = "~-"
-function ConnectP6(plr)
-    if plr == playerA then return end
-	plr.Chatted:Connect(function(msg)
-		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
-		if command == "..".. speakersname .."1214" and message then
-            if message then
-                groupowner = message
-                spawn(function()
-                    wait(120)
-                    groupowner = "~-"
-                end)
-            end
-		end
-	end)
-end
-
-function ConnectP7(plr)
-	plr.Chatted:Connect(function(msg)
-		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
-		if command == "..".. speakersname .."1215" and message then
-            if message ~= "-=-~-..-=)(^27311" then
-                notif(groupowner .." has invited you to their team as ".. message)
-                teaminviteoption = true
-                task.wait(.5)
-                notif("type >yes to accept and >no to decline")
-            else
-                notif(groupowner .." has invited you to their team")
-                teaminviteoption = true
-                task.wait(.5)
-                notif("type >yes to accept and >no to decline")
-            end
-		end
-	end)
-end
 
 local function getPlayer(name)
     local foundPlayers = {}
@@ -1121,6 +1105,9 @@ local function usetsbmove(move)
 end
 
 commands.yes = function()
+    if dontuse then return end
+    dontuse = true
+    task.wait(.1)
     local speakername = game.Players.LocalPlayer.Name
     if connectoptionperms then
         notif("Accepted request")
@@ -1131,6 +1118,8 @@ commands.yes = function()
         notif("No requests to accept")
         connectoptionperms = false
     end
+    task.wait(.2)
+    dontuse = false
 end
 
 wait()
@@ -1486,50 +1475,38 @@ end
 
 wait()
 
-commands.teaminvite = function(plr, nick)
-    local target = getfullname(plr)
-    local speakername = game.Players.LocalPlayer.Name
-    respondedmessage = false
-    task.wait(.2)
-    if not game.Players:FindFirstChild(target) then
-        error("invalid target")
-        return
-    end
-    notif("Target found. Connecting to target..")
-    sc("..checkforusingthis218 ".. target)
-    spawn(function()
-        for i = 1,5 do
-            wait(1)
-            timer = timer + 1
-        end
-    end)
-    repeat wait() until respondedmessage == true or timer == 5
-    if not respondedmessage then 
-        error("Target is not using this script.")
-        dontuse = false
-        return
-    end
-    sc("..".. target .."1214 ".. speakername)
-    task.wait(.1)
+commands.meow = function(args)
+
+    -- Now plr and nick are properly separated
+    notif("Target Player: ".. plr)
+
     if nick then
-        sc("..".. target .."1215 ".. nick)
-        notif("Invititation sent to ".. target .." as ".. nick)
-        notif("Waiting for response...")
-    elseif not nick then
-        sc("..".. target .."1215 -=-~-..-=)(^27311")
-        notif("Invitation sent to ".. target)
-        notif("Waiting for response...")
+        notif("Nickname: ".. nick)
+    else
+        notif("No nickname provided")
     end
-    task.wait(.1)
-    dontuse = false
+
+    -- Continue your connection logic here...
 end
 
-wait()
 
-commands.connect = function(plr)
+commands.teaminvite = function(args)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
+
+    local firstSpace = string.find(args, " ")
+    local plr, nick
+
+    if firstSpace then
+        plr = string.sub(args, 1, firstSpace - 1) 
+        nick = string.sub(args, firstSpace + 1) 
+    else
+        plr = args
+        nick = nil
+    end
+
+
     local returntimer = false
     local target = getfullname(plr)
     local timer = 0
@@ -1538,35 +1515,55 @@ commands.connect = function(plr)
     respondedmessage = false
     requestyes = false
     requestno = false
+
     if not game.Players:FindFirstChild(target) then
         error("invalid target")
         dontuse = false
         return
     end
+
     notif("Connecting to ".. target)
-    sc("..checkforusingthis218 ".. target)
+
+    for i = 1,20 do
+        sc("..checkforusingthis218 ".. target)
+        task.wait()
+    end
+
     spawn(function()
         for i = 1,5 do
             wait(1)
             timer = timer + 1
         end
     end)
+
     repeat wait() until respondedmessage == true or timer == 5
+
     if not respondedmessage then 
         error("Target is not using this script.")
         dontuse = false
         return
     end
+
+    if nick then
+        sc("..".. target .."1215 ".. nick)
+    else
+        sc("..".. target .."1214 nonicklal")
+    end
+    wait(.1)
     sc("..getrequestername2834 ".. speakername)
     task.wait(.1)
     sc("..askforconnect8172 ".. target)
     wait()
+
     notif("Waiting for response...")
+
     spawn(function()
-        wait(20)
+        wait(30)
         returntimer = true
     end)
+
     repeat wait() until requestyes or requestno or returntimer
+
     if requestyes then
         notif(target .." accepted the request")
         connectionwithplr = true
@@ -1579,11 +1576,11 @@ commands.connect = function(plr)
         task.wait(.5)
         notif("Closing request...")
     end
+
     task.wait(.2)
     dontuse = false
 end
 
-wait()
 
 commands.silentchat = function(e)
     if not e or e == "" then return end
@@ -1924,8 +1921,6 @@ for i, v in pairs(game:GetService("Players"):GetPlayers()) do
     ConnectP3(v)
     ConnectP4(v)
     ConnectP5(v)
-    ConnectP6(v)
-    ConnectP7(v)
 end
 
 game:GetService("Players").PlayerAdded:Connect(function(plr)
@@ -1933,8 +1928,6 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     ConnectP3(plr)
     ConnectP4(plr)
     ConnectP5(plr)
-    ConnectP6(plr)
-    ConnectP7(plr)
 end)
 
 
