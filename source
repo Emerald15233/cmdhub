@@ -245,7 +245,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.4")
+notif("Version 1.0.5")
 
 
 local function rollrand()
@@ -327,13 +327,14 @@ function ConnectP1(plr)
 	end)
 end
 
-local givennick = nil
+local givennick
 function ConnectP6(plr)
     if plr == playerA then return end
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..".. speakersname .."1215" and message then
             givennick = message
+            notif(givennick)
         end
 	end)
 end
@@ -1127,6 +1128,7 @@ commands.no = function()
     if connectoptionperms then
         notif("Declined request")
         sc("..requestdecline122")
+        connectoptionperms = false
     else
         notif("No requests to decline")
     end
@@ -1919,6 +1921,7 @@ for i, v in pairs(game:GetService("Players"):GetPlayers()) do
     ConnectP3(v)
     ConnectP4(v)
     ConnectP5(v)
+    ConnectP6(v)
 end
 
 game:GetService("Players").PlayerAdded:Connect(function(plr)
@@ -1926,6 +1929,7 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     ConnectP3(plr)
     ConnectP4(plr)
     ConnectP5(plr)
+    ConnectP6(plr)
 end)
 
 
