@@ -1490,7 +1490,7 @@ commands.meow = function(args)
 end
 
 
-commands.teaminvite1 = function(args)
+commands.teaminvite2 = function(args)
     if dontuse then return end
     dontuse = true
     task.wait(.2)
