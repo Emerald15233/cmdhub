@@ -245,7 +245,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.3")
+notif("Version 1.0.4")
 
 
 local function rollrand()
