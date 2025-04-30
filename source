@@ -246,6 +246,10 @@ function error(msg)
     notif("error: " .. msg, Color3.new(1, 0, 0)) 
 end
 
+function bluenotif(msg)
+    notif(msg, Color3.new(0, 0, 1))
+end
+
 notif("Starting up...")
 notif("Version 1.1.2")
 
@@ -389,12 +393,12 @@ end
 
 function ConnectP7(plr)
     plr.Chatted:Connect(function(msg)
-        local command, message1, message2 = string.match(msg, '^(%S+)%s+(%S+)%s+(%S+)$')
+        local command, message1, message2 = string.match(msg, '^(%S+)%s+(%S+)%s+(.+)$')
         if command == "..argstest" then
-            if dontuse then notif("ew") return end 
+            if dontuse then return end 
             dontuse = true
             task.wait(.1)
-            notif(message2 .." : ".. message1)
+            bluenotif(message2 .." : ".. message1)
             task.wait(.6)
             dontuse = false
         end
