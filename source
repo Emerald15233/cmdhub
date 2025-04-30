@@ -247,7 +247,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.8")
+notif("Version 1.0.9")
 
 
 local function rollrand()
@@ -329,7 +329,7 @@ function ConnectP1(plr)
 	end)
 end
 
-local givennick
+local givennick = nil
 function ConnectP6(plr)
     if plr == playerA then return end
 	plr.Chatted:Connect(function(msg)
@@ -1521,12 +1521,16 @@ end
 wait()
 
 commands.pm = function(msg)
+    if not msg then
+        error("invalid message")
+        return
+    end
     if not ownernick or not givennick then
-        error("You havent created or joined a team yet!")
+        error("You haven't created or joined a team yet!")
         return
     end
     if ownernick then
-        sc("..argstest ".. msg .." ".. ownernnick)
+        sc("..argstest ".. msg .." ".. ownernick)
     elseif givennick then
         sc("..argstest ".. msg .." ".. givennick)
     end
@@ -1570,6 +1574,7 @@ commands.teaminvite = function(args)
 
     if givennick then
         error("Only the team owner can invite people ")
+        return
     end
 
     if ownernick then
