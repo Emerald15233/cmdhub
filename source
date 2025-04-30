@@ -304,7 +304,7 @@ UIS.InputBegan:Connect(function(i)
 	end
 end)
 
-local playerA = game.PlayersLocalPlayer
+local playerA = game.Players.LocalPlayer
 local Players = game:GetService("Players")
 local ewffew = game.Players.LocalPlayer.Name
 -- connect
