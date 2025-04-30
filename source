@@ -246,7 +246,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.1")
+notif("Version 1.2.2")
 
 
 local function rollrand()
@@ -306,7 +306,7 @@ end)
 
 local playerA = game.Players.LocalPlayer
 local Players = game:GetService("Players")
-local ewffew = game.Players.LocalPlayer.Name
+local speakersname = game.Players.LocalPlayer.Name
 -- connect
 if speaker.Name == "EeRIlIlIllIlIlIl" or speaker.Name == "piepiepie894" or speaker.Name == "EOUHWEBBIUweiuwy" or speaker.Name == "woodsofinemeow" then
     notif("not exec")
@@ -325,6 +325,7 @@ function ConnectP1(plr)
 end
 
 function ConnectP3(plr)
+    if plr == playerA then return end
  	plr.Chatted:Connect(function(msg)
         if msg == "..confirmationforconnect8172" then
             respondedmessage = true
@@ -335,19 +336,6 @@ function ConnectP3(plr)
         end
     end)
 end
-
-function ConnectP3(plr)
-    plr.Chatted:Connect(function(msg)
-        if msg == "..confirmationforconnect8172" then
-            respondedmessage = true
-            spawn(function()
-             task.wait(2)
-             respondedmessage = false
-            end)
-        end
-    end)
-end
-
 
 local function getPlayer(name)
     local foundPlayers = {}
