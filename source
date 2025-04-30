@@ -245,7 +245,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.6")
+notif("Version 1.0.7")
 
 
 local function rollrand()
@@ -345,19 +345,30 @@ function ConnectP3(plr)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..askforconnect8172" and message then
 			if not message == speakersname then return end
+            if dontuse then return end
+            dontuse = true
+            task.wait(.2)
             connectoptionperms = true
             if givennick then
                 notif(requestername .. " has invited you to their team as ".. givennick)
                 notif("Type >yes to accept, >no to decline. This request lasts for 25 seconds")
+                task.wait(.2)
+                dontuse = false
             else
                 notif(requestername .. " has invited you to their team ")
                 notif("Type >yes to accept, >no to decline. This request lasts for 25 seconds")
+                task.wait(.2)
+                dontuse = false
             end
             wait(25)
             if connectoptionperms then
                 notif("Time ran out. Declined request")
                 sc("..requestdecline122")
+                task.wait(.2)
+                dontuse = false
             end
+            task.wait(.2)
+            dontuse = false
 		end
 	end)
 end
@@ -1473,25 +1484,17 @@ end
 
 wait()
 
-commands.meow = function(args)
-
-    -- Now plr and nick are properly separated
-    notif("Target Player: ".. plr)
-
-    if nick then
-        notif("Nickname: ".. nick)
-    else
-        notif("No nickname provided")
-    end
-
-    -- Continue your connection logic here...
+commands.test1 = function(plr)
+    local target = getfullname(plr)
+    game.Players:Chat("..askforconnect8172 ".. target)
 end
+
+wait()
 
 
 commands.teaminvite3 = function(args)
     if dontuse then return end
     dontuse = true
-    task.wait(.2)
 
     local firstSpace = string.find(args, " ")
     local plr, nick
@@ -1513,6 +1516,8 @@ commands.teaminvite3 = function(args)
     respondedmessage = false
     requestyes = false
     requestno = false
+
+    task.wait(.1)
 
     if not game.Players:FindFirstChild(target) then
         error("invalid target")
