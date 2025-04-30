@@ -246,7 +246,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.1.6")
+notif("Version 1.1.7")
 
 
 local function rollrand()
@@ -324,7 +324,7 @@ function ConnectP1(plr)
 	end)
 end
 
-function ConnectP2(plr)
+function ConnectP3(plr)
     if plr == playerA then return end
     if msg == "..confirmationforconnect8172" then
         respondedmessage = true
@@ -1399,7 +1399,7 @@ end
 
 wait()
 
-commands.reveal = function(plr)
+commands.reveal1 = function(plr)
     local target = getfullname(plr)
     local timer = false
     local revealed = false
@@ -1414,7 +1414,7 @@ commands.reveal = function(plr)
         timer = true
     end)
     for i = 1,20 do
-        sc("..".. target .."reveal1221")
+        sc("..checkforusingthis218 ".. target)
         task.wait()
     end
     repeat task.wait() until respondedmessage or timer
@@ -1763,7 +1763,13 @@ end)
  
 for i,v in pairs(game:GetService("Players"):GetPlayers()) do
 	ConnectP1(v)
+    ConnectP3(v)
 end
+
+game:GetService("Players").PlayerAdded:Connect(function(plr)
+	ConnectP1(plr)
+    ConnectP3(plr)
+end)
 
 wait()
 notif("cmdhub loaded")
