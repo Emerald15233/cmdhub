@@ -251,7 +251,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.1.2")
+notif("Version 1.1.3")
 
 
 local function rollrand()
