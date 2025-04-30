@@ -247,7 +247,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.9")
+notif("Version 1.1.0")
 
 
 local function rollrand()
@@ -336,6 +336,7 @@ function ConnectP6(plr)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..".. speakersname .."1215" and message then
             givennick = message
+            task.wait(.1)
             notif(givennick)
         end
 	end)
@@ -390,7 +391,6 @@ function ConnectP7(plr)
     plr.Chatted:Connect(function(msg)
         local command, message1, message2 = string.match(msg, '^(%S+)%s+(%S+)%s+(%S+)$')
         if command == "..argstest" then
-            if not ownernick or not givennick then return end
             notif(message1 .." : ".. message2)
         end
     end)
