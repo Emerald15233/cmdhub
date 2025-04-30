@@ -247,7 +247,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.1.1")
+notif("Version 1.1.2")
 
 
 local function rollrand()
@@ -390,8 +390,13 @@ end
 function ConnectP7(plr)
     plr.Chatted:Connect(function(msg)
         local command, message1, message2 = string.match(msg, '^(%S+)%s+(%S+)%s+(%S+)$')
-        if command == "..argstest" then
-            notif(message1 .." : ".. message2)
+        if command == "..pmtoallscriptusers1112" then
+            if dontuse then return end 
+            dontuse = true
+            task.wait(.1)
+            notif(message2 .." : ".. message1)
+            task.wait(.5)
+            dontuse = false
         end
     end)
 end
@@ -1537,9 +1542,9 @@ commands.pm = function(msg)
         return
     end
     if ownernick then
-        sc("..argstest ".. msg .." ".. ownernick)
+        sc("..pmtoallscriptusers1112 ".. msg .." ".. ownernick)
     elseif givennick then
-        sc("..argstest ".. msg .." ".. givennick)
+        sc("..pmtoallscriptusers1112 ".. msg .." ".. givennick)
     end
 end
 
