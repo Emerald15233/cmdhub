@@ -247,7 +247,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.1.0")
+notif("Version 1.1.1")
 
 
 local function rollrand()
@@ -1520,12 +1520,19 @@ end
 
 wait()
 
+commands.rev1 = function()
+    print(givennick)
+    print(ownernick)
+end
+
+wait()
+
 commands.pm = function(msg)
     if not msg then
         error("invalid message")
         return
     end
-    if not ownernick or not givennick then
+    if not ownernick and not givennick then
         error("You haven't created or joined a team yet!")
         return
     end
