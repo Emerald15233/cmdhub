@@ -246,7 +246,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.1.7")
+notif("Version 1.1.8")
 
 
 local function rollrand()
@@ -320,14 +320,17 @@ function ConnectP1(plr)
 		if command == "..checkforusingthis218" and message then
             if not message == speakersname then return end
             sc("..confirmationforconnect8172")
+            notif('a')
 		end
 	end)
 end
 
 function ConnectP3(plr)
-    if plr == playerA then return end
+
+ 	plr.Chatted:Connect(function(msg)
     if msg == "..confirmationforconnect8172" then
         respondedmessage = true
+        notif('b')
         spawn(function()
             task.wait(2)
             respondedmessage = false
