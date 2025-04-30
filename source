@@ -180,6 +180,8 @@ Base.Draggable = true
 
 -- var
 
+local teamname = nil
+local ownernick = nil
 local connectionwithplr = false
 local respondedmessage = false
 local requestyes = false
@@ -245,7 +247,7 @@ function error(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.0.7")
+notif("Version 1.0.8")
 
 
 local function rollrand()
@@ -349,7 +351,7 @@ function ConnectP3(plr)
             dontuse = true
             task.wait(.2)
             connectoptionperms = true
-            if givennick then
+            if givennick ~= speakersname then
                 notif(requestername .. " has invited you to their team as ".. givennick)
                 notif("Type >yes to accept, >no to decline. This request lasts for 25 seconds")
                 task.wait(.2)
@@ -384,6 +386,17 @@ function ConnectP5(plr)
 	end)
 end
 
+function ConnectP7(plr)
+    plr.Chatted:Connect(function(msg)
+        local command, message1, message2 = string.match(msg, '^(%S+)%s+(%S+)%s+(%S+)$')
+        if command == "..argstest" then
+            if not ownernick or not givennick then return end
+            notif(message1 .." : ".. message2)
+        end
+    end)
+end
+
+
 function ConnectP4(plr)
     if plr == playerA then return end
  	plr.Chatted:Connect(function(msg)
@@ -406,7 +419,7 @@ function ConnectP4(plr)
                 respondedmessage = false
             end)
         elseif msg == "..".. speakersname .."1214" then
-            givennick = nil
+            givennick = speakersname
         end
  	end)
  end
@@ -1120,6 +1133,7 @@ commands.yes = function()
     if connectoptionperms then
         notif("Accepted request")
         sc("..requestaccept122")
+        teamname = requestername
         connectionwithplr = true
         connectoptionperms = false
     else
@@ -1136,14 +1150,36 @@ commands.no = function()
     local speakername = game.Players.LocalPlayer.Name
     if connectoptionperms then
         notif("Declined request")
+        teamname = nil
         sc("..requestdecline122")
         connectoptionperms = false
-    else
-        notif("No requests to decline")
+        return
+    end
+    if ownernickperms then
+        ownernick = speakername
+        ownernickperms = false
+        return
+    end
+
+    error("No requests to decline")
+end
+
+wait()
+
+commands.givenick = function(nick)
+    if not nick then
+        error("invalid nickname")
+        return
+    end
+    if ownernickperms then
+        ownernick = nick
+        notif("Set nickname to ".. nick)
+        ownernickperms = false
     end
 end
 
 wait()
+
 
 
 commands.say = function(msg)
@@ -1484,15 +1520,21 @@ end
 
 wait()
 
-commands.test1 = function(plr)
-    local target = getfullname(plr)
-    game.Players:Chat("..askforconnect8172 ".. target)
+commands.pm = function(msg)
+    if not ownernick or not givennick then
+        error("You havent created or joined a team yet!")
+        return
+    end
+    if ownernick then
+        sc("..argstest ".. msg .." ".. ownernnick)
+    elseif givennick then
+        sc("..argstest ".. msg .." ".. givennick)
+    end
 end
 
 wait()
 
-
-commands.teaminvite3 = function(args)
+commands.teaminvite = function(args)
     if dontuse then return end
     dontuse = true
 
@@ -1506,8 +1548,9 @@ commands.teaminvite3 = function(args)
         plr = args
         nick = nil
     end
-
-
+    
+    local ownernnickperms = false
+    local nicktimer = false
     local returntimer = false
     local target = getfullname(plr)
     local timer = 0
@@ -1523,6 +1566,34 @@ commands.teaminvite3 = function(args)
         error("invalid target")
         dontuse = false
         return
+    end
+
+    if givennick then
+        error("Only the team owner can invite people ")
+    end
+
+    if ownernick then
+        print("found nick")
+    else
+        notif("Team owner detected without a nickname.")
+        notif("Set a nickname? ( >no if no, if yes, >givenick <name>, you have 20s )")
+        ownernickperms = true
+    end
+
+    wait()
+    if ownernickperms then
+        spawn(function()
+            wait(20)
+            nicktimer = true
+        end)
+        repeat 
+            task.wait()
+            if nicktimer then
+                ownernick = speakername
+                notif("Time ran out, set team owner's nickname to ".. speakername)
+                ownernickperms = false
+            end
+        until ownernick ~= nil
     end
 
     notif("Connecting to ".. target)
@@ -1915,6 +1986,7 @@ game.Players.LocalPlayer.Chatted:Connect(function(msg)
             commands[command](table.concat(args, " "))
         else
             notif("invalid command")
+            dontuse = false
         end
     end
 end)
@@ -1925,6 +1997,7 @@ for i, v in pairs(game:GetService("Players"):GetPlayers()) do
     ConnectP4(v)
     ConnectP5(v)
     ConnectP6(v)
+    ConnectP7(v)
 end
 
 game:GetService("Players").PlayerAdded:Connect(function(plr)
@@ -1933,6 +2006,7 @@ game:GetService("Players").PlayerAdded:Connect(function(plr)
     ConnectP4(plr)
     ConnectP5(plr)
     ConnectP6(plr)
+    ConnectP7(plr)
 end)
 
 
