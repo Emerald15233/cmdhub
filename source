@@ -246,7 +246,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.1.8")
+notif("Version 1.1.9")
 
 
 local function rollrand()
@@ -326,16 +326,29 @@ function ConnectP1(plr)
 end
 
 function ConnectP3(plr)
-
  	plr.Chatted:Connect(function(msg)
-    if msg == "..confirmationforconnect8172" then
-        respondedmessage = true
-        notif('b')
-        spawn(function()
-            task.wait(2)
-            respondedmessage = false
-        end)
-    end
+        if msg == "..confirmationforconnect8172" then
+            respondedmessage = true
+            notif('b')
+            spawn(function()
+             task.wait(2)
+             respondedmessage = false
+            end)
+        end
+    end)
+end
+
+function ConnectP3(plr)
+    plr.Chatted:Connect(function(msg)
+        if msg == "..confirmationforconnect8172" then
+            respondedmessage = true
+            notif('b')
+            spawn(function()
+             task.wait(2)
+             respondedmessage = false
+            end)
+        end
+    end)
 end
 
 
