@@ -320,7 +320,6 @@ function ConnectP1(plr)
 		if command == "..checkforusingthis218" and message then
             if not message == speakersname then return end
             sc("..confirmationforconnect8172")
-            notif('a')
 		end
 	end)
 end
@@ -329,7 +328,6 @@ function ConnectP3(plr)
  	plr.Chatted:Connect(function(msg)
         if msg == "..confirmationforconnect8172" then
             respondedmessage = true
-            notif('b')
             spawn(function()
              task.wait(2)
              respondedmessage = false
@@ -1415,7 +1413,7 @@ end
 
 wait()
 
-commands.reveal1 = function(plr)
+commands.reveal = function(plr) 
     local target = getfullname(plr)
     local timer = false
     local revealed = false
@@ -1424,6 +1422,9 @@ commands.reveal1 = function(plr)
         error("invalid target")
         return
     end
+    if dontuse then return end
+    dontuse = true
+    task.wait(.2)
     notif("Please wait")
     spawn(function()
         wait(6)
@@ -1434,17 +1435,27 @@ commands.reveal1 = function(plr)
         task.wait()
     end
     repeat task.wait() until respondedmessage or timer
-    if revealed then
+    if respondedmessage then
         notif("Target is using this script!")
     elseif timer then
         notif("Target is not using this script!")
     end
+    task.wait(.2)
+    dontuse = false
 end
 
 commands.silentchat = function(e)
     if not e or e == "" then return end
     notif("Chatted silently: " .. e)
-    game.Players:Chat(e)
+    sc(e)
+end
+
+wait()
+
+commands.sc = function(e)
+    if not e or e == "" then return end
+    notif("Chatted silently: " .. e)
+    sc(e)
 end
 
 wait()
@@ -1738,7 +1749,7 @@ addFrame("             jerk             ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("  silentchat (msg)  ") wait(randNum) rollrand()
+addFrame("silentchat/sc (msg)") wait(randNum) rollrand()
 
 task.wait()
 
