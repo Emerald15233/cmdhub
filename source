@@ -390,12 +390,12 @@ end
 function ConnectP7(plr)
     plr.Chatted:Connect(function(msg)
         local command, message1, message2 = string.match(msg, '^(%S+)%s+(%S+)%s+(%S+)$')
-        if command == "..pmtoallscriptusers1112" then
-            if dontuse then return end 
+        if command == "..argstest" then
+            if dontuse then notif("ew") return end 
             dontuse = true
             task.wait(.1)
             notif(message2 .." : ".. message1)
-            task.wait(.5)
+            task.wait(.6)
             dontuse = false
         end
     end)
@@ -1542,9 +1542,9 @@ commands.pm = function(msg)
         return
     end
     if ownernick then
-        sc("..pmtoallscriptusers1112 ".. msg .." ".. ownernick)
+        sc("..argstest ".. msg .." ".. ownernick)
     elseif givennick then
-        sc("..pmtoallscriptusers1112 ".. msg .." ".. givennick)
+        sc("..argstest ".. msg .." ".. givennick)
     end
 end
 
@@ -1604,7 +1604,7 @@ commands.teaminvite = function(args)
             nicktimer = true
         end)
         repeat 
-            task.wait()
+            wait()
             if nicktimer then
                 ownernick = speakername
                 notif("Time ran out, set team owner's nickname to ".. speakername)
