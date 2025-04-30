@@ -314,24 +314,22 @@ else
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
 end
 function ConnectP1(plr)
-    if plr == playerA then return end
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
 		if command == "..checkforusingthis218" and message then
-            if not message == speakersname then return end
+            if message ~= speakersname then return end
             sc("..confirmationforconnect8172")
 		end
 	end)
 end
 
 function ConnectP3(plr)
-    if plr == playerA then return end
  	plr.Chatted:Connect(function(msg)
         if msg == "..confirmationforconnect8172" then
             respondedmessage = true
             spawn(function()
-             task.wait(2)
-             respondedmessage = false
+                task.wait(2)
+                respondedmessage = false
             end)
         end
     end)
@@ -1395,6 +1393,16 @@ commands.attach = function(target)
         attach(target)
     else
         notif("Usage: " .. prefix .. "attach [player]")
+    end
+end
+
+wait()
+
+commands.e = function()
+    if respondedmessage then
+        notif("yes")
+    else
+        notif("Nooo")
     end
 end
 
