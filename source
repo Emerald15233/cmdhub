@@ -260,7 +260,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.2")
+notif("Version 1.2.3")
 
 
 local function rollrand()
@@ -309,9 +309,7 @@ UIS.InputBegan:Connect(function(i)
 			box.Text = "KN:/".. prefix
 			local msg = input
 			box:ReleaseFocus()
-            for i = 1,10 do
-			    sc(input)
-            end
+			sc(input)
 		elseif box.Text:sub(1,5) ~= "KN:/".. prefix then
 			box.Text = history
 			box.CursorPosition = #box.Text+1
@@ -392,17 +390,255 @@ local function getPlayer(name)
 end
 
 -- func
+local function fling(target)
+local Targets = {target} -- "All", "Target Name", "arian_was_here"
+
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+local AllBool = false
+
+local GetPlayer = function(Name)
+    Name = Name:lower()
+    if Name == "all" or Name == "others" then
+        AllBool = true
+        return
+    elseif Name == "random" then
+        local GetPlayers = Players:GetPlayers()
+        if table.find(GetPlayers,Player) then table.remove(GetPlayers,table.find(GetPlayers,Player)) end
+        return GetPlayers[math.random(#GetPlayers)]
+    elseif Name ~= "random" and Name ~= "all" and Name ~= "others" then
+        for _,x in next, Players:GetPlayers() do
+            if x ~= Player then
+                if x.Name:lower():match("^"..Name) then
+                    return x;
+                elseif x.DisplayName:lower():match("^"..Name) then
+                    return x;
+                end
+            end
+        end
+    else
+        return
+    end
+end
+
+local Message = function(_Title, _Text, Time)
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = _Title, Text = _Text, Duration = Time})
+end
+
+local SkidFling = function(TargetPlayer)
+    local Character = Player.Character
+    local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+    local RootPart = Humanoid and Humanoid.RootPart
+
+    local TCharacter = TargetPlayer.Character
+    local THumanoid
+    local TRootPart
+    local THead
+    local Accessory
+    local Handle
+
+    if TCharacter:FindFirstChildOfClass("Humanoid") then
+        THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
+    end
+    if THumanoid and THumanoid.RootPart then
+        TRootPart = THumanoid.RootPart
+    end
+    if TCharacter:FindFirstChild("Head") then
+        THead = TCharacter.Head
+    end
+    if TCharacter:FindFirstChildOfClass("Accessory") then
+        Accessory = TCharacter:FindFirstChildOfClass("Accessory")
+    end
+    if Accessoy and Accessory:FindFirstChild("Handle") then
+        Handle = Accessory.Handle
+    end
+
+    if Character and Humanoid and RootPart then
+        if RootPart.Velocity.Magnitude < 50 then
+            getgenv().OldPos = RootPart.CFrame
+        end
+        if THumanoid and THumanoid.Sit and not AllBool then
+            return error("Targeting is sitting") -- u can remove dis part if u want lol
+        end
+        if THead then
+            workspace.CurrentCamera.CameraSubject = THead
+        elseif not THead and Handle then
+            workspace.CurrentCamera.CameraSubject = Handle
+        elseif THumanoid and TRootPart then
+            workspace.CurrentCamera.CameraSubject = THumanoid
+        end
+        if not TCharacter:FindFirstChildWhichIsA("BasePart") then
+            return
+        end
+        
+        local FPos = function(BasePart, Pos, Ang)
+            RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
+            Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
+            RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+            RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+        end
+        
+        local SFBasePart = function(BasePart)
+            local TimeToWait = 5
+            local Time = tick()
+            local Angle = 0
+
+            repeat
+                if RootPart and THumanoid then
+                    if BasePart.Velocity.Magnitude < 50 then
+                        Angle = Angle + 100
+
+                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(2.25, 1.5, -2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(-2.25, -1.5, 2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+                    else
+                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        
+                        FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, -TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5 ,0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                    end
+                else
+                    break
+                end
+            until BasePart.Velocity.Magnitude > 500 or BasePart.Parent ~= TargetPlayer.Character or TargetPlayer.Parent ~= Players or not TargetPlayer.Character == TCharacter or THumanoid.Sit or Humanoid.Health <= 0 or tick() > Time + TimeToWait
+        end
+        
+        workspace.FallenPartsDestroyHeight = 0/0
+        
+        local BV = Instance.new("BodyVelocity")
+        BV.Name = "EpixVel"
+        BV.Parent = RootPart
+        BV.Velocity = Vector3.new(9e8, 9e8, 9e8)
+        BV.MaxForce = Vector3.new(1/0, 1/0, 1/0)
+        
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+        
+        if TRootPart and THead then
+            if (TRootPart.CFrame.p - THead.CFrame.p).Magnitude > 5 then
+                SFBasePart(THead)
+            else
+                SFBasePart(TRootPart)
+            end
+        elseif TRootPart and not THead then
+            SFBasePart(TRootPart)
+        elseif not TRootPart and THead then
+            SFBasePart(THead)
+        elseif not TRootPart and not THead and Accessory and Handle then
+            SFBasePart(Handle)
+        else
+            return error("Target is missing everything")
+        end
+        
+        BV:Destroy()
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+        workspace.CurrentCamera.CameraSubject = Humanoid
+        
+        repeat
+            RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
+            Character:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
+            Humanoid:ChangeState("GettingUp")
+            table.foreach(Character:GetChildren(), function(_, x)
+                if x:IsA("BasePart") then
+                    x.Velocity, x.RotVelocity = Vector3.new(), Vector3.new()
+                end
+            end)
+            task.wait()
+        until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
+        workspace.FallenPartsDestroyHeight = getgenv().FPDH
+    else
+        return error("an unexpected error occured")
+    end
+end
+if Targets[1] then for _,x in next, Targets do GetPlayer(x) end else return end
+
+if AllBool then
+    for _,x in next, Players:GetPlayers() do
+        SkidFling(x)
+    end
+end
+
+for _,x in next, Targets do
+    if GetPlayer(x) and GetPlayer(x) ~= Player then
+        if GetPlayer(x).UserId ~= 0 then
+            local TPlayer = GetPlayer(x)
+            if TPlayer then
+                SkidFling(TPlayer)
+            end
+        else
+            error("invalid target")
+        end
+    elseif not GetPlayer(x) and not AllBool then
+        error("invalid target")
+    end
+end
+end
 
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 
 local keepscript = false
 local TeleportCheck = false
+
+--[[
 Players.LocalPlayer.OnTeleport:Connect(function(State)
-    if keepscript then
-	    TeleportCheck = true
-	    queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
-    end
+	TeleportCheck = true
+	queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/cmdhub/refs/heads/main/source'))()")
 end)
+]]
+
+function fireserver(item, file)
+    if not item or not file then 
+        error("Invalid argument(s)")
+        return
+    end
+    local service = game:GetService(file)
+    local remote = service:FindFirstChild(item)
+    if remote and remote.FireServer then
+        remote:FireServer()
+    else
+        error("Remote '" .. item .. "' not found or not a RemoteEvent")
+    end
+end
+
 
 function sc(silentmsg)
     Players:Chat(silentmsg)
@@ -1169,7 +1405,7 @@ end
 
 wait()
 
-commands.rejoin = function()
+commands.rejoin = function(yesorno)
     rejoin()
 end
 wait()
@@ -1367,32 +1603,34 @@ commands.tsbbring = function(target)
                 end
                 usetsbmove("Atmos Cleave")
             end
+        else
+            error("All your compatible moves are on cooldown, try again later")
         end
     end
 
     if bkp:FindFirstChild("Crushing Pull") or bkp:FindFirstChild("Windstorm Fury") then
-        if bkp:FindFirstChild("Crushing Pull") and not firstcd then
-            spawn(function()
-                undertp(target)
-            end)
-            task.wait(.2)
-            if live:FindFirstChild("M1ing") then
-                notif("Waiting for target to stop m1ing...")
+            if bkp:FindFirstChild("Crushing Pull") and not firstcd then
+                spawn(function()
+                    undertp(target)
+                end)
+                task.wait(.2)
+                if live:FindFirstChild("M1ing") then
+                    notif("Waiting for target to stop m1ing...")
                 repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("M1ing")
-            end
-            user.CameraMaxZoomDistance = 0.5
-            lookAt(target)
-            wait()
-            spawn(function()
-                usetsbmove("Crushing Pull")
-            end)
-            spawn(function()
-                task.wait(1)
-                user.CameraMaxZoomDistance = 21
-                user.CameraMinZoomDistance = 20
-                wait(.1)
-                user.CameraMaxZoomDistance = normmax
-                user.CameraMinZoomDistance = normmin
+                end
+                user.CameraMaxZoomDistance = 0.5
+                lookAt(target)
+                wait()
+                spawn(function()
+                    usetsbmove("Crushing Pull")
+                end)
+                spawn(function()
+                    task.wait(1)
+                    user.CameraMaxZoomDistance = 21
+                    user.CameraMinZoomDistance = 20
+                    wait(.1)
+                    user.CameraMaxZoomDistance = normmax
+                    user.CameraMinZoomDistance = normmin
             end)
         end
     end
@@ -1400,6 +1638,27 @@ commands.tsbbring = function(target)
     looping = false
     a.CFrame = currentpos
     dontuse = false
+end
+
+wait()
+local flinging = false
+commands.loopfling = function(target)
+    local weweffwe = getfullname(target)
+    notif("Loopflinging" .. weweffwe)
+    flinging = true
+    while flinging do
+        fling(target)
+        task.wait(1)
+    end
+end
+
+commands.unloopfling = function()
+    notif("Stopped loopflinging")
+    flinging = false
+end
+
+commands.fling = function(target)
+    fling(target)
 end
 
 wait()
@@ -1568,7 +1827,9 @@ commands.toloc = function(loc)
         gotocframe(CFrame.new(-2.42143869e-08, 8.9999999e+11, -1.11758709e-08, 1, -6.99137601e-08, -3.7177882e-14, 6.99137601e-08, 1, 3.21123927e-08, 3.49327839e-14, -3.21123927e-08, 1))
     elseif loc == "pixel" then
         gotocframe(CFrame.new(30000000, 29999920, 30000000, 1, 1.35856171e-08, -4.3734493e-14, -1.35856171e-08, 1, -6.24038021e-09, 4.36497152e-14, 6.24038021e-09, 1))
-
+    elseif loc == "whitebox" then
+        gotocframe(CFrame.new(-2023.15149, 204.172897, 459.454956, -0.967054963, 4.93500019e-10, 0.254567713, 3.46459444e-10, 1, -6.22446261e-10, -0.254567713, -5.13742326e-10, -0.967054963))
+    
     end
 end
 wait()
@@ -1689,7 +1950,11 @@ commands.cmdlist = function()
     print("UNLOCKON: Disables lockon") -- 27 (27 - 1)
     print("LOOKAT: Looks at the selected target") -- 27
     print("SAY: Says the selected message ") -- 28
+    print("FLING: Flings the selected target") -- 29
+    print("LOOPFLING: Loop flings the selected target") -- 30
+    print("UNLOOPFLING: Stops loop flinging")
     print("----------------------------------TP LIST---------------------------------------------")
+    print("whitebox [LBBG ONLY]")
     print("tsbedge [TSB ONLY]")
     print("bigplatform / bpf [TSB ONLY]")
     print("tsbmountain [TSB ONLY]")
@@ -1811,7 +2076,31 @@ addFrame("       say (msg)       ") wait(randNum) rollrand()
 task.wait()
 
 addFrame("      lookat (plr)      ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        fling (plr)        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("    loopfling (plr)    ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("      unloopfling      ") wait(randNum) rollrand()
+
+task.wait()
 --[[
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
 task.wait()
 
 addFrame("        unlockon        ") wait(randNum) rollrand()
@@ -1823,6 +2112,11 @@ addFrame("        unlockon        ") wait(randNum) rollrand()
 task.wait()
 
 addFrame("        unlockon        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
 ]]
 
 
