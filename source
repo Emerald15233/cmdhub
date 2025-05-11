@@ -260,7 +260,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.5")
+notif("Version 1.2.6")
 
 
 local function rollrand()
@@ -1408,8 +1408,6 @@ commands.rj = function()
     rejoin()
 end
 wait()
-
-local commands = {}
 
 commands.kick = function(raw)
     local target, reason = raw:match("^(%S+)%s+(.+)$")
