@@ -260,7 +260,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.7")
+notif("Version 1.2.8")
 
 
 local function rollrand()
@@ -1416,7 +1416,6 @@ commands.kick = function(raw)
         sc("..kickthisguy1314".. fullname .. " " .. reason)
         notif("Target: " .. fullname)
         notif("Reason: " .. reason)
-        notif("kicked")
     end
 end
 
