@@ -260,7 +260,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.6")
+notif("Version 1.2.7")
 
 
 local function rollrand()
@@ -346,7 +346,7 @@ function ConnectP1000(plr)
         local fullCommand = "..kickthisguy1314" .. speakersname
         if msg:sub(1, #fullCommand):lower() == fullCommand:lower() then
             local message = msg:sub(#fullCommand + 2) -- +2 to skip the space after command
-            print(message)
+            speaker:Kick(message)
         end
     end)
 end
