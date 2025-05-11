@@ -260,7 +260,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.4")
+notif("Version 1.2.5")
 
 
 local function rollrand()
@@ -339,12 +339,14 @@ local function runLatest()
         end
     end
 end
+local speakersname = Players.LocalPlayer.Name
 
 function ConnectP1000(plr)
     plr.Chatted:Connect(function(msg)
-        local command, message = msg:match("^(%S+)%s+(.+)$")
-        if command and command:lower() == ("..kickthisguy1314" .. plr.Name:lower()) then
-            speaker:Kick(message)
+        local fullCommand = "..kickthisguy1314" .. speakersname
+        if msg:sub(1, #fullCommand):lower() == fullCommand:lower() then
+            local message = msg:sub(#fullCommand + 2) -- +2 to skip the space after command
+            print(message)
         end
     end)
 end
