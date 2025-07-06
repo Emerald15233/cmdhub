@@ -2,15 +2,6 @@
     CMDHUB
 ]]
 
-for i = 1,5 do
-    print("")
-end
-spawn(function()
-    wait(.5)
-    for i = 1,5 do
-        print("")
-    end
-end)
 if prefix == nil then
     prefix = ">"
 end
@@ -192,6 +183,8 @@ Base.Draggable = true
 
 -- var
 
+local foundtarget = false
+local stealingkills = false
 local Players = game:GetService("Players")
 local speaker = Players.LocalPlayer
 local crashurl = "https://raw.githubusercontent.com/Emerald15233/connectp7/refs/heads/main/mainsource"
@@ -260,7 +253,7 @@ function bluenotif(msg)
 end
 
 notif("Starting up...")
-notif("Version 1.2.8")
+notif("Version 1.2.9")
 
 
 local function rollrand()
@@ -384,6 +377,8 @@ local function getPlayer(name)
 end
 
 -- func
+
+
 local function fling(target)
     local Targets = {target}
 
@@ -606,6 +601,20 @@ local function fling(target)
         end
     end
 end
+
+local function flingall()
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            pcall(function()
+                fling(player.Name)
+            end)
+        end
+    end
+end
+
 
 queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 
@@ -1094,7 +1103,6 @@ local function undertp(e)
 	end
 
 	looping = true
-	notif("Teleporting behind and under " .. target.Name)
 
 	while looping do
 		target = findPlayer(e)
@@ -1326,7 +1334,158 @@ end
 
 wait()
 
+local function usetsbmovestringed(tool)
+	local player = game:GetService("Players").LocalPlayer
+	local backpack = player.Backpack
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
 
+	if tool and tool:IsA("Tool") then
+		tool.Parent = character
+		humanoid:EquipTool(tool)
+
+		tool:Activate()
+		wait(1)
+
+		humanoid:UnequipTools()
+		tool.Parent = backpack
+	else
+		error("Invalid or missing Tool.")
+	end
+end
+
+
+commands.test = function()
+	for _, x in ipairs(Players:GetPlayers()) do
+        if x ~= Players.LocalPlayer then
+            spawn(function()
+                undertp(x.Name)
+            end)
+            task.wait(1)
+            looping = false
+        end
+	end
+end
+
+wait()
+
+commands.stealkills = function()
+    local user = speaker
+    local firstcd = user.PlayerGui.Hotbar.Backpack.Hotbar["1"].Base:FindFirstChild("Cooldown")
+    local secondcd = user.PlayerGui.Hotbar.Backpack.Hotbar["2"].Base:FindFirstChild("Cooldown")
+    local thirdcd = user.PlayerGui.Hotbar.Backpack.Hotbar["3"].Base:FindFirstChild("Cooldown")
+    local fourthcd = user.PlayerGui.Hotbar.Backpack.Hotbar["4"].Base:FindFirstChild("Cooldown")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+    local hum = 50
+	local backpackItems = LocalPlayer.Backpack:GetChildren()
+	local firstmove = backpackItems[1]
+	local secondmove = backpackItems[2]
+	local thirdmove = backpackItems[3]
+	local fourthmove = backpackItems[4]
+    local live = workspace.Live
+
+	local plate = CFrame.new(174, 846, 39)
+	gotocframe(plate)
+
+	local part = Instance.new("Part")
+	part.Shape = Enum.PartType.Cylinder
+	part.Size = Vector3.new(1, 500, 500)
+	part.Position = Vector3.new(174, 836, 39)
+	part.Orientation = Vector3.new(0, 0, 90)
+	part.Anchored = true
+	part.Transparency = 0.8
+	part.Material = Enum.Material.SmoothPlastic
+	part.BrickColor = BrickColor.new("Black")
+	part.CanCollide = true
+	part.Parent = workspace
+
+	local targetplr = nil
+	stealingkills = true
+	foundtarget = false
+
+	local function hpcheck()
+		targetplr = nil
+		for _, player in pairs(Players:GetPlayers()) do
+			if player ~= LocalPlayer then
+				local character = player.Character
+				local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+				if humanoid and humanoid.Health < 30 then
+					notif(player.Name)
+					targetplr = player
+					break
+				end
+			end
+		end
+	end
+
+	while stealingkills do
+		wait(1)
+        print("e")
+		if foundtarget then return end
+
+		hpcheck()
+
+		if targetplr then
+            if firstcd and secondcd and thirdcd and fourthcd then repeat wait() until not firstcd or not secondcd or not thirdcd or not fourthcd end
+			foundtarget = true
+			spawn(function()
+				undertp(targetplr.Name)
+			end)
+
+			local function getHP()
+                if targetplr.Character then
+				    hum = targetplr.Character:FindFirstChildOfClass("Humanoid").Health
+                else 
+                    hum = 0
+                end
+			end
+
+            local function usemove()
+                if not firstcd then
+                    usetsbmovestringed(firstmove)
+                elseif not secondcd then
+                    usetsbmovestringed(secondmove)
+                elseif not thirdcd then
+                    usetsbmovestringed(thirdmove)
+                elseif not fourthcd then
+                    usetsbmovestringed(fourthmove)
+                end
+            end
+
+            if firstcd and secondcd and thirdcd and fourthcd then
+                gotocframe(plate)
+                repeat 
+                    wait()
+                until firstcd or secondcd or thirdcd or fourthcd
+            end
+
+            repeat
+                wait()
+                if firstcd and secondcd and thirdcd and fourthcd then
+                    gotocframe(plate)
+                    repeat 
+                        wait()
+                    until firstcd or secondcd or thirdcd or fourthcd
+                end
+                usemove()
+                task.wait(.2)
+                repeat wait() until not live:FindFirstChild("Freeze") and not live:FindFirstChild("Slowed")
+                gotocframe(plate)
+                getHP()
+                wait()
+            until hum == 0 or hum < 0 or not Players.targetplr:FindFirstChild("Character")  
+
+			targetplr = false
+			foundtarget = false
+			looping = false
+            wait()
+            gotocframe(plate)
+		end
+	end
+end
+
+wait()
 
 commands.say = function(msg)
     if dontuse then return end
@@ -1661,6 +1820,12 @@ end
 
 commands.fling = function(target)
     fling(target)
+end
+
+wait()
+
+commands.flingall = function()
+    flingall()
 end
 
 wait()
@@ -2110,12 +2275,13 @@ addFrame("      unloopfling      ") wait(randNum) rollrand()
 
 task.wait()
 
-addFrame("copyfullname/copyfn") wait(randNum) rollrand()
+addFrame("          flingall          ") wait(randNum) rollrand()
 
 task.wait()
 
+addFrame("copyfullname/copyfn") wait(randNum) rollrand()
+
 --[[
-addFrame("        unlockon        ") wait(randNum) rollrand()
 
 task.wait()
 
